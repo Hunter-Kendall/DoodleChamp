@@ -18,6 +18,6 @@ from django.urls import include, path
 
 
 urlpatterns = [
-    path('chat/', include('DoodleChamp_app.urls')),
+    path('DoodleChamp/', include('DoodleChamp_app.urls')),
     path('admin/', admin.site.urls),
 ]
