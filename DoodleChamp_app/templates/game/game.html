@@ -17,7 +17,7 @@
                 Player List
               </div>
               <div class="col border">
-                <canvas id="draw-area"></canvas>
+                <canvas id="draw-area" class = "border"></canvas>
               </div>
               <div id="chat" class="col border">
                 chat
@@ -26,5 +26,36 @@
               </div>
             </div>
           </div>
+          <script>
+            const canvas = document.getElementById("draw-area");
+            const context = canvas.getContext("2d");
+            let isDrawing = false;
+            let lastX = 0;
+            let lastY = 0;
+
+            canvas.addEventListener('mousedown', (event) =>{
+              isDrawing = true;
+              lastX = event.clientX - canvas.offsetLeft;
+              lastY = event.clientY - canvas.offsetTop;
+              console.log("drawing")
+            });
+
+            canvas.addEventListener('mousemove', (event) => {
+              if (isDrawing) {
+                const currentX = event.clientX - canvas.offsetLeft;
+                const currentY = event.clientY - canvas.offsetTop;
+                context.beginPath();
+                context.moveTo(lastX, lastY);
+                context.lineTo(currentX, currentY);
+                context.stroke();
+                lastX = currentX;
+                lastY = currentY;
+                    }
+            });
+
+            canvas.addEventListener('mouseup', () => {
+              isDrawing = false;
+            });
+          </script>
     </body>
 </html>
