@@ -23,7 +23,8 @@
                 chat
                 <input id="chat-field" type="text">
                 <button id="guess-button">guess</button>
-                <button id="square-btn">&#11036</button>
+                <button id="pencil-btn">&#9998</button>
+                <button id="rectangle-btn">&#11036</button>
               </div>
             </div>
           </div>
@@ -31,18 +32,53 @@
             const canvas = document.getElementById("draw-area");
             const context = canvas.getContext("2d");
             let isDrawing = false;
+            let isRectangle = false;
+            let isPencil = false;
             let lastX = 0;
             let lastY = 0;
+            let currentX = 0;
+            let currentY = 0;
+
+
+            
+            document.querySelector('#rectangle-btn').onclick = function(e){
+                isRectangle = true;
+                isPencil = false;
+            };
+
+            document.querySelector('#pencil-btn').onclick = function(e){
+                isRectangle = false;
+                isPencil = true;
+            };
+
 
             canvas.addEventListener('mousedown', (event) =>{
-              isDrawing = true;
-              lastX = event.clientX - canvas.offsetLeft;
-              lastY = event.clientY - canvas.offsetTop;
-              console.log("drawing")
+              if (isRectangle === true) { 
+                isDrawing = true;
+                lastX = event.clientX - canvas.offsetLeft;
+                lastY = event.clientY - canvas.offsetTop;
+                console.log("drawing rectangle")
+              }
+
+              if (isPencil === true) { 
+                isDrawing = true;
+                lastX = event.clientX - canvas.offsetLeft;
+                lastY = event.clientY - canvas.offsetTop;
+                console.log("drawing")
+              }
             });
 
             canvas.addEventListener('mousemove', (event) => {
-              if (isDrawing) {
+              if (isDrawing && isRectangle) {
+                const currentX = event.clientX - canvas.offsetLeft;
+                const currentY = event.clientY - canvas.offsetTop;
+                context.beginPath();
+                context.moveTo(lastX, lastY);
+                context.rect(lastX, lastY, currentX-lastX, currentY-lastY);
+                context.stroke();
+              };
+
+              if (isDrawing && isPencil) {
                 const currentX = event.clientX - canvas.offsetLeft;
                 const currentY = event.clientY - canvas.offsetTop;
                 context.beginPath();
@@ -51,12 +87,21 @@
                 context.stroke();
                 lastX = currentX;
                 lastY = currentY;
-                    }
+              };
             });
 
             canvas.addEventListener('mouseup', () => {
               isDrawing = false;
+              if (isRectangle){
+                const currentX = event.clientX - canvas.offsetLeft;
+                const currentY = event.clientY - canvas.offsetTop;
+                context.beginPath();
+                context.moveTo(lastX, lastY);
+                context.rect(lastX, lastY, currentX - lastX, currentY - lastY);
+                context.stroke();
+              }
             });
+      
           </script>
     </body>
 </html>
