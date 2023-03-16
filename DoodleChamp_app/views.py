@@ -7,3 +7,6 @@ def index(request):
 
 def room(request, room_name):
     return render(request, "game/lobby.html", {"room_name": room_name})
+
+def game_room(request, game_room_name):
+    return render(request, "game/game.html", {"game_room_name": game_room_name})

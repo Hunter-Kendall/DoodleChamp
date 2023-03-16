@@ -17,6 +17,21 @@
                 Settings
               </div>
             </div>
-          </div>
+          </div><br>
+        <input id="game-code" type="text"><br><br>
+        <button id="start-btn">Start</button>
+
+        <script>
+          document.querySelector('#game-code').focus();
+            document.querySelector('#game-code').onkeyup = function(e) {
+                if (e.keyCode === 13) { // enter, return
+                    document.querySelector('#start-btn').click();
+                }
+            }
+          document.querySelector('#start-btn').onclick = function(e){
+              let gameRoomName = document.querySelector('#game-code').value;
+              window.location.pathname = '/DoodleChamp/' + gameRoomName + '/';
+          }
+      </script>
     </body>
 </html>
