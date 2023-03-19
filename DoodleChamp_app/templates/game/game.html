@@ -4,6 +4,9 @@
         <meta charset="utf-8"/>
         <title>DoodleChamp lobby</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+        
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
     </header>
     <body>
         <h2>Join code: ####</h2>
@@ -23,13 +26,26 @@
                 chat
                 <input id="chat-field" type="text">
                 <button id="guess-btn">guess</button>
-                <button id="pencil-btn">&#9998</button>
-                <button id="rectangle-btn">&#11036</button>
-                <button id="undo-btn">undo</button>
+              </div>
+              <div id="draw" class="col border">
+                Draw
+                  <button id="pencil-btn">&#9998</button>
+                  <button id="rectangle-btn">&#11036</button>
+                  <button id="line-btn">&#8213</button>
+                  <button id="circle-btn">&#x25EF</button>
+                  <button id="undo-btn">undo</button><br>
+                  
+                  <form>
+                    <label class="form-label"></label>
+                    <input type="Color" id="color-val" name="" class="form-control form-control-color" value="#000000">
+                  </form>
+                  
               </div>
             </div>
           </div>
+
           <script>
+            
             const canvas = document.getElementById("draw-area");
             const ctx = canvas.getContext("2d");
             let cPushArray = new Array();
@@ -37,20 +53,22 @@
             let isDrawing = false;
             let isRectangle = false;
             let isPencil = false;
+            let isLine = false;
             let lastX = 0;
             let lastY = 0;
             let currentX = 0;
             let currentY = 0;
+            let colorCode = 0;
             // let cpic = new Image();
             // cpic.src = "data:image/png;base64,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"
             // ctx.drawImage(cpic, 0, 0);
 
             function cPush() {
                 cStep++;
-                if (cStep < cPushArray.length) { cPushArray.length = cStep; }
+                if (cStep < cPushArray.length) {   cPushArray.length = cStep; }
                 cPushArray.push(canvas.toDataURL());
-                console.log(cPushArray);
-                console.log(cStep);
+                // console.log(cPushArray);
+                // console.log(cStep);
             }
             cPush();
             function cUndo() {
@@ -74,32 +92,49 @@
             document.querySelector('#rectangle-btn').onclick = function(e){
                 isRectangle = true;
                 isPencil = false;
+                isLine = false;
+                isCircle = false;
             };
 
             document.querySelector('#pencil-btn').onclick = function(e){
                 isRectangle = false;
                 isPencil = true;
+                isLine = false;
+                isCircle = false;
             };
+
+            document.querySelector('#line-btn').onclick = function(e){
+                isRectangle = false;
+                isPencil = false;
+                isLine = true;
+                isCircle = false;
+            };
+
+            document.querySelector('#circle-btn').onclick = function(e){
+                isRectangle = false;
+                isPencil = false;
+                isLine = false;
+                isCircle = true;
+            };
+
 
             document.querySelector('#undo-btn').onclick = function(){
                 cUndo();
             }
 
+            document.querySelector('#color-val').onchange = function(e) {
+                colorCode = document.querySelector('#color-val').value;
+                // console.log(colorCode)
+            }
+
 
             canvas.addEventListener('mousedown', (event) =>{
-              if (isRectangle === true) { 
-                isDrawing = true;
-                lastX = event.clientX - canvas.offsetLeft;
-                lastY = event.clientY - canvas.offsetTop;
-                console.log("drawing rectangle")
-              }
 
-              if (isPencil === true) { 
-                isDrawing = true;
-                lastX = event.clientX - canvas.offsetLeft;
-                lastY = event.clientY - canvas.offsetTop;
-                console.log("drawing")
-              }
+              isDrawing = true;
+              lastX = event.clientX - canvas.offsetLeft;
+              lastY = event.clientY - canvas.offsetTop;
+              console.log("drawing")
+
             });
 
             canvas.addEventListener('mousemove', (event) => {
@@ -115,6 +150,7 @@
               if (isDrawing && isPencil) {
                 const currentX = event.clientX - canvas.offsetLeft;
                 const currentY = event.clientY - canvas.offsetTop;
+                ctx.strokeStyle = colorCode
                 ctx.beginPath();
                 ctx.moveTo(lastX, lastY);
                 ctx.lineTo(currentX, currentY);
@@ -129,11 +165,31 @@
               if (isRectangle){
                 const currentX = event.clientX - canvas.offsetLeft;
                 const currentY = event.clientY - canvas.offsetTop;
+                ctx.strokeStyle = colorCode
                 ctx.beginPath();
                 ctx.moveTo(lastX, lastY);
                 ctx.rect(lastX, lastY, currentX - lastX, currentY - lastY);
                 ctx.stroke();
               }
+              if (isLine){
+                const currentX = event.clientX - canvas.offsetLeft;
+                const currentY = event.clientY - canvas.offsetTop;
+                ctx.strokeStyle = colorCode
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(currentX, currentY);
+                ctx.stroke();
+              }
+
+              if (isCircle){
+                const currentX = event.clientX - canvas.offsetLeft;
+                const currentY = event.clientY - canvas.offsetTop;
+                ctx.strokeStyle = colorCode
+                ctx.beginPath();
+                ctx.arc(currentX-(currentX-lastX)/2, currentY-(currentY-lastY)/2, (currentX-lastX)/2, 0*Math.PI,2*Math.PI)
+                ctx.stroke();
+              }
+
               cPush();
             });
       
