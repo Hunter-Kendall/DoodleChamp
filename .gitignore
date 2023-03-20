@@ -7,3 +7,6 @@ virtualenv
 node_modules/
 package-lock.json
 package.json
+DoodleChamp_app/templates/game/test.html
+
+DoodleChamp_app/migrations/
