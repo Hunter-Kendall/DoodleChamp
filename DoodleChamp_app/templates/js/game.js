@@ -7,6 +7,10 @@ const canvas = document.getElementById("draw-area");
             let colorCode = 0;
             let lastX = 0;
             let lastY = 0;
+            let rectX = 0;
+            let rectY = 0;
+            let background = null;
+            var cPic_rect = new Image();
 
 
             function cPush() {
@@ -63,6 +67,7 @@ const canvas = document.getElementById("draw-area");
                 isDrawing = true;
                 lastX = event.clientX - canvas.offsetLeft;
                 lastY = event.clientY - canvas.offsetTop;
+                background = canvas.toDataURL();
                 
             
             });
@@ -70,7 +75,7 @@ const canvas = document.getElementById("draw-area");
             canvas.addEventListener('mousemove', (event) => {
 
 
-              if (isDrawing && drawTool == 0) {
+              if (isDrawing && drawTool === 0) {
                 //drawing with pencil
                 const currentX = event.clientX - canvas.offsetLeft;
                 const currentY = event.clientY - canvas.offsetTop;
@@ -81,6 +86,30 @@ const canvas = document.getElementById("draw-area");
                 ctx.stroke();
                 lastX = currentX;
                 lastY = currentY;
+              };
+
+              if (isDrawing && drawTool === 1) {
+                //live rectangle view
+
+                const currentX = event.clientX - canvas.offsetLeft;
+                const currentY = event.clientY - canvas.offsetTop;
+
+                
+                cPic_rect.onload = function () {
+                    // ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(cPic_rect, 0, 0);
+                }
+                cPic_rect.src = background;
+                // if (cPic_rect.complete) {
+                //     ctx.clearRect(0, 0, canvas.width, canvas.height);
+                //     ctx.drawImage(cPic_rect, 0, 0);
+                // }
+
+                ctx.beginPath();
+                ctx.rect(lastX, lastY, currentX - lastX, currentY - lastY);
+                ctx.strokeStyle = "#000";
+                ctx.stroke();
+
               };
 
             });

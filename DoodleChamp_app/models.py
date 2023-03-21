@@ -1,3 +1,10 @@
 from django.db import models
 
-# Create your models here.
+class Words(models.Model):
+    id = models.AutoField(
+                  auto_created = True,
+                  primary_key = True,
+                  serialize = False, 
+                  verbose_name ='ID')
+    word = models.TextField()
+    point_value = models.IntegerField()
