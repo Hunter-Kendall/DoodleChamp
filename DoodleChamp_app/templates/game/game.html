@@ -4,7 +4,8 @@
         <meta charset="utf-8"/>
         <title>DoodleChamp lobby</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
-    </header>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+      </header>
     <body>
         <h2>Join code: ####</h2>
                       
@@ -23,9 +24,17 @@
                 chat
                 <input id="chat-field" type="text">
                 <button id="guess-btn">guess</button>
-                <button id="pencil-btn">&#9998</button>
-                <button id="rectangle-btn">&#11036</button>
-                <button id="undo-btn">undo</button>
+                <div id="draw" class="col border">
+              </div>
+              <br>
+              <div>
+                  Draw
+                    <button id="pencil-btn">&#9998</button>
+                    <button id="rectangle-btn">&#11036</button>
+                    <button id="line-btn">&#8213</button>
+                    <button id="circle-btn">&#x25EF</button>
+                    <button id="undo-btn">undo</button>
+                    <input type="Color" id="color-val" name="" class="form-control form-control-color" value="#000000">
               </div>
             </div>
           </div>
