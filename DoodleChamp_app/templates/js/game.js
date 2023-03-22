@@ -4,6 +4,7 @@ const canvas = document.getElementById("draw-area");
             let cStep = -1;
             let isDrawing = false;
             let drawTool = 0;
+            let colorCode = 0;
             let lastX = 0;
             let lastY = 0;
             let rectX = 0;
@@ -44,9 +45,21 @@ const canvas = document.getElementById("draw-area");
                 drawTool = 1;
             };
 
-document.querySelector('#undo-btn').onclick = function(){
+            document.querySelector('#line-btn').onclick = function(e){
+              drawTool = 2;
+            };
+
+            document.querySelector('#circle-btn').onclick = function(e){
+              drawTool = 3;
+            };
+
+            document.querySelector('#undo-btn').onclick = function(){
                 cUndo();
-            }
+            };
+
+            document.querySelector('#color-val').onchange = function(){
+              colorCode = document.querySelector('#color-val').value;
+            };
 
 
             canvas.addEventListener('mousedown', (event) =>{
@@ -66,6 +79,7 @@ document.querySelector('#undo-btn').onclick = function(){
                 //drawing with pencil
                 const currentX = event.clientX - canvas.offsetLeft;
                 const currentY = event.clientY - canvas.offsetTop;
+                ctx.strokeStyle = colorCode
                 ctx.beginPath();
                 ctx.moveTo(lastX, lastY);
                 ctx.lineTo(currentX, currentY);
@@ -73,6 +87,7 @@ document.querySelector('#undo-btn').onclick = function(){
                 lastX = currentX;
                 lastY = currentY;
               };
+
               if (isDrawing && drawTool === 1) {
                 //live rectangle view
 
@@ -101,23 +116,42 @@ document.querySelector('#undo-btn').onclick = function(){
                 ctx.stroke();
 
               };
+
             });
 
             canvas.addEventListener('mouseup', (event) => {
-                console.log(event);
-                isDrawing = false;
-                if (drawTool === 1){
-                    if (cPic_rect.complete) {
-                        ctx.clearRect(0, 0, canvas.width, canvas.height);
-                        ctx.drawImage(cPic_rect, 0, 0);
-                    }
-                    //drawing rectangle
-                    const currentX = event.clientX - canvas.offsetLeft;
-                    const currentY = event.clientY - canvas.offsetTop;
-                    ctx.beginPath();
-                    ctx.moveTo(lastX, lastY);
-                    ctx.rect(lastX, lastY, currentX - lastX, currentY - lastY);
-                    ctx.stroke();
-                }
-                cPush();
+              isDrawing = false;
+              if (drawTool == 1){
+                //drawing rectangle
+                const currentX = event.clientX - canvas.offsetLeft;
+                const currentY = event.clientY - canvas.offsetTop;
+                ctx.strokeStyle = colorCode
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
+                ctx.rect(lastX, lastY, currentX - lastX, currentY - lastY);
+                ctx.stroke();
+              }
+
+              if (drawTool === 2){
+                //drawing line
+                const currentX = event.clientX - canvas.offsetLeft;
+                const currentY = event.clientY - canvas.offsetTop;
+                ctx.strokeStyle = colorCode
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(currentX, currentY);
+                ctx.stroke();
+              }
+
+              if (drawTool === 3){
+                //drawing circle
+                const currentX = event.clientX - canvas.offsetLeft;
+                const currentY = event.clientY - canvas.offsetTop;
+                ctx.strokeStyle = colorCode
+                ctx.beginPath();
+                ctx.arc(currentX-(currentX-lastX)/2, currentY-(currentY-lastY)/2, (currentX-lastX)/2, 0*Math.PI,2*Math.PI)
+                ctx.stroke();
+              }
+
+              cPush();
             });
