@@ -29,15 +29,31 @@
               <br>
               <div>
                   Draw
-                    <button id="pencil-btn">&#9998</button>
-                    <button id="rectangle-btn">&#11036</button>
-                    <button id="line-btn">&#8213</button>
-                    <button id="circle-btn">&#x25EF</button>
+                    <button id="pencil-btn" class="btn-sm" onclick="toggleButton(toString(pencil))">&#9998</button>
+                    <button id="rectangle-btn" class="btn-sm" onclick="toggleButton(toString(rectangle))" >&#11036</button>
+                    <button id="line-btn" class="btn-sm" onclick="toggleButton(toString(line))">&#8213</button>
+                    <button id="circle-btn" class="btn-sm" onclick="toggleButton(toString(circle))">&#x25EF</button>
                     <button id="undo-btn">undo</button>
                     <input type="Color" id="color-val" name="" class="form-control form-control-color" value="#000000">
               </div>
             </div>
           </div>
+          <script>
+            function toggleButton(btn) {
+              let button = document.getElementById(btn + "-btn");
+
+              if (button.classList.contains("active")) {
+                return;
+              }
+
+              let buttons = document.getElementsByClassName("btn-sm");
+              for (var i = 0; i < buttons.length; i++) {
+                buttons[i].classList.remove("active");
+              }
+
+              button.classList.add("active");
+            }
+          </script>
           <script type="text/javascript" src="../js/game.js"></script>
     </body>
 </html>

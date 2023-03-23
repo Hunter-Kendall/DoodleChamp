@@ -37,6 +37,21 @@ const canvas = document.getElementById("draw-area");
               }
             }
 
+            function toggleButton(btn) {
+              let button = document.getElementById(btn + "-btn");
+
+              if (button.classList.contains("active")) {
+                return;
+              }
+
+              let buttons = document.getElementsByClassName("btn btn-secondary btn-sm");
+              for (var i = 0; i < buttons.length; i++) {
+                buttons[i].classList.remove("active");
+              }
+
+              button.classList.add("active");
+            }
+
             document.querySelector('#pencil-btn').onclick = function(e){
                 drawTool = 0;
             };
@@ -96,7 +111,7 @@ const canvas = document.getElementById("draw-area");
 
                 
                 cPic_rect.onload = function () {
-                    // ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
                     ctx.drawImage(cPic_rect, 0, 0);
                 }
                 cPic_rect.src = background;
@@ -107,7 +122,7 @@ const canvas = document.getElementById("draw-area");
 
                 ctx.beginPath();
                 ctx.rect(lastX, lastY, currentX - lastX, currentY - lastY);
-                ctx.strokeStyle = "#000";
+                ctx.strokeStyle = colorCode;
                 ctx.stroke();
 
               };
