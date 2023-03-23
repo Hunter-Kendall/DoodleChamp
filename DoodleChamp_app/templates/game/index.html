@@ -6,17 +6,19 @@
     </header>
     <body>
         <h2>Welcome to DoodleChamp</h2>
-        <form action="Lobby" method="POST">
+        <form action="Lobby/Host" method="POST" >
             <input id="username" name="name" type="text">
             <button id="lobby-btn">Create Lobby</button>
             {% csrf_token %}
         </form>
         <br>
         <p>Join a Lobby</p>
-        <form action="join" method = "POST">
+        <form action="Lobby/Player" method = "POST">
             <input type="text" name="name">
             <input id="lobby-code" type="text" name="code">
+            
         <button id="join-btn">Join Lobby</button><br><br>
+        {% csrf_token %}
         </form>
         
 
