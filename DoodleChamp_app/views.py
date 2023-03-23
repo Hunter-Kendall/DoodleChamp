@@ -11,7 +11,7 @@ def index(request):
 def room_code():
     code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=4)) 
     room_filter = Lobby.objects.filter(code = room_code)
-    if len(room_filter.values) == 0:
+    if len(room_filter.values()) == 0:
         return code
     else:
         return room_code()
