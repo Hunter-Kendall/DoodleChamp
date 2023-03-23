@@ -36,7 +36,7 @@ def game_room(request, game_room_name):
 
 def join_lobby(request):
     room_filter = Lobby.objects.filter(code = request.POST["code"])
-    if len(room_filter.values()) == 0:
+    if len(room_filter.values()) == 1:
         return render(request, "game/lobby.html", {"room_name": request.POST["code"]})
     else:
         pass
