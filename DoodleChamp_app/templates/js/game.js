@@ -115,6 +115,11 @@ const canvas = document.getElementById("draw-area");
                     ctx.drawImage(cPic_rect, 0, 0);
                 }
                 cPic_rect.src = background;
+                if (cPic_rect.complete) {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(cPic_rect, 0, 0);
+                }
+                
                 // if (cPic_rect.complete) {
                 //     ctx.clearRect(0, 0, canvas.width, canvas.height);
                 //     ctx.drawImage(cPic_rect, 0, 0);
