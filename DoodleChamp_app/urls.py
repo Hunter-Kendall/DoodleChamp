@@ -8,5 +8,5 @@ urlpatterns = [
     path("Lobby/Host", views.create_lobby, name="lobby"),
     #path("<str:room_name>/", views.lobby, name="lobby"),
     # path("<str:game_room_name>/", views.game_room, name="game_room"),
-    path("Lobby/Player", views.join_lobby, name="join"),
+    path("Lobby", views.join_lobby, name="join"),
 ]
