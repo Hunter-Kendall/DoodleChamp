@@ -12,7 +12,6 @@ const canvas = document.getElementById("draw-area");
             let background = null;
             var cPic_rect = new Image();
 
-
             function cPush() {
                 cStep++;
                 if (cStep < cPushArray.length) { cPushArray.length = cStep; }

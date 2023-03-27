@@ -41,6 +41,13 @@
                 window.location.pathname = '/DoodleChamp/' + roomName + '/';
             }
         </script>
+
+        {% for lobby in lobbies reversed %}
+            <tr>
+                <small>{{ lobby.code }}</small></td>
+            </tr>
+        {% endfor %}
+
         
     </body>
 </html>

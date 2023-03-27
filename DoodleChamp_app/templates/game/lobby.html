@@ -1,58 +1,73 @@
 <!DOCTYPE html>
 <html>
-    <header>
-        <meta charset="utf-8"/>
-        <title>DoodleChamp lobby</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
-    </header>
-    <body>
-        <h2>Join code: {{ room_name }}</h2>
-        
-        {{ room_name|json_script:"room-name" }}
-        <div class="container text-center">
-            <div class="row">
-              <div id="player-list" class="col border">
-                Player List
-              </div>
-              <div class="col border">
-                Settings
-              </div>
-            </div>
-          </div><br>
-          <br><br>
-        <button id="start-btn">Start</button>
+<header>
+  <meta charset="utf-8" />
+  <title>DoodleChamp lobby</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+</header>
 
-        <script>
-          // document.querySelector('#game-code').onkeyup = function(e) {
-          //     if (e.keyCode === 13) { // enter, return
-          //         document.querySelector('#start-btn').click();
-          //     }
-          // }
-          const roomName = JSON.parse(document.getElementById('room-name').textContent);
+<body>
+  <h2>Join code: {{ room_name }}</h2>
 
-          const chatSocket = new WebSocket(
-              'ws://'
-              + window.location.host
-              + '/ws/DoodleChamp/'
-              + roomName
-              + '/'
-          );
+  {{ room_name|json_script:"room-name" }}
+  <div class="container text-center">
+    <div class="row">
+      <div id="player-list" class="col border">
+        Player List
+      </div>
+      <div class="col border">
+        Settings
+      </div>
+    </div>
+  </div><br>
+  <br><br>
+  
+  <form action="Game" method = "POST">
+    <input type="hidden" value="{{ room_name }}" name="game-code">
+    
+    <button id="start-btn">Start Game</button><br><br>
+    {% csrf_token %}
+  </form>
 
-          chatSocket.onmessage = function(e) {
-              const data = JSON.parse(e.data);
-              let playerList = document.getElementById("player-list")
-              ptag = document.createElement('div');
-                    ptag.innerHTML = data.player;
-                    playerList.appendChild(ptag);
-          };
-          chatSocket.onopen = function(e){
-            chatSocket.send(JSON.stringify({
-              'player': "player1"
-            }))
-          }
-          chatSocket.onclose = function(e) {
-              console.error('Chat socket closed unexpectedly');
-          };
+  <script>
+
+    document.querySelector('#start-btn').onclick = function(e){
+      let gameCode = '{{ room_name }}';
+      console.log(gameCode)
+      window.location.pathname = '/DoodleChamp/' + gameCode + '/';
+    }
+
+    // document.querySelector('#game-code').onkeyup = function(e) {
+    //     if (e.keyCode === 13) { // enter, return
+    //         document.querySelector('#start-btn').click();
+    //     }
+    // }
+    const roomName = JSON.parse(document.getElementById('room-name').textContent);
+
+    const chatSocket = new WebSocket(
+      'ws://'
+      + window.location.host
+      + '/ws/DoodleChamp/'
+      + roomName
+      + '/'
+    );
+
+    chatSocket.onmessage = function (e) {
+      const data = JSON.parse(e.data);
+      let playerList = document.getElementById("player-list")
+      ptag = document.createElement('div');
+      ptag.innerHTML = data.player;
+      playerList.appendChild(ptag);
+    };
+    chatSocket.onopen = function (e) {
+      chatSocket.send(JSON.stringify({
+        'player': "player1"
+      }))
+    }
+    chatSocket.onclose = function (e) {
+      console.error('Chat socket closed unexpectedly');
+    };
 
 
           // document.querySelector('#chat-message-input').focus();
@@ -70,6 +85,7 @@
           //     }))
           //     messageInputDom.value = '';
           // };
-      </script>
-    </body>
+  </script>
+</body>
+
 </html>

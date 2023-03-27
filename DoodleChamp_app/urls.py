@@ -9,4 +9,5 @@ urlpatterns = [
     #path("<str:room_name>/", views.lobby, name="lobby"),
     # path("<str:game_room_name>/", views.game_room, name="game_room"),
     path("Lobby", views.join_lobby, name="join"),
+    path("Game", views.game_room, name="game_room"),
 ]
