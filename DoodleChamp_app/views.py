@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from DoodleChamp_app.models import Lobby
+from DoodleChamp_app.models import Lobby, Players
 import string
 import random
 
@@ -20,10 +20,13 @@ def room_code():
 def create_lobby(request):
     # Randomly generate a room name.
     code = room_code()
-    Lobby.objects.create(code = code, host = request.POST["name"])
+    username = request.POST["name"]
+    Lobby.objects.create(code = code, host = username)
+    lobby_code = Lobby.objects.get(code = code)
+    Players.objects.create(code = lobby_code, name = username)
 
     # Pass in the room name (or room_id) and the user_name to be rendered on the page.
-    return render(request, "game/lobby.html", {"room_name": code})#this is where we set room id
+    return render(request, "game/lobby.html", {"room_name": code, "username": username})#this is where we set room id
     # In lobby.html, have the websocket connect and pass withit the room_id and user_name.
     # In the consumer, create a group for this game.
     # Coordinate communications between websockets and javascript.
@@ -35,8 +38,12 @@ def game_room(request, game_room_name):
     pass 
 
 def join_lobby(request):
-    room_filter = Lobby.objects.filter(code = request.POST["code"])
-    if len(room_filter.values()) == 1:
-        return render(request, "game/lobby.html", {"room_name": request.POST["code"]})
+    lobby_code = request.POST["code"]
+    username = request.POST["name"]
+    lobby_filter = Lobby.objects.filter(code = lobby_code)
+    if len(lobby_filter.values()) == 1:
+        code = Lobby.objects.get(code = lobby_code)
+        Players.objects.create(code = code, name = username)
+        return render(request, "game/lobby.html", {"room_name": lobby_code, "username": username})
     else:
         pass

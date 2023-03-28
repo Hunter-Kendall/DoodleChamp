@@ -40,14 +40,15 @@
 
           chatSocket.onmessage = function(e) {
               const data = JSON.parse(e.data);
-              let playerList = document.getElementById("player-list")
-              ptag = document.createElement('div');
+              let playerList = document.getElementById("player-list");
+              ptag = document.createElement('p');
                     ptag.innerHTML = data.player;
                     playerList.appendChild(ptag);
           };
           chatSocket.onopen = function(e){
             chatSocket.send(JSON.stringify({
-              'player': "player1"
+              "type": "websocket.connect",
+              "player": "{{username}}"
             }))
           }
           chatSocket.onclose = function(e) {

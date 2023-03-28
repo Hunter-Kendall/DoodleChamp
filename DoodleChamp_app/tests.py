@@ -25,11 +25,11 @@ class LobbyModelTest(TestCase):
         Lobby.objects.create(code = "abcd", host = "hunter")
         code = Lobby.objects.get(code = "abcd")
         Players.objects.create(code = code, name = "kendall")
-
+        Players.objects.create(code = code, name = "hunter")
         lobbies = Lobby.objects.all()
         players = Players.objects.all()
         self.assertEqual(lobbies.count(), 1)
-        self.assertEqual(players.count(), 1)
+        self.assertEqual(players.count(), 2)
         Lobby.objects.filter(code = "abcd").delete()
         players2 = Players.objects.all()
         self.assertEqual(players2.count(), 0)
