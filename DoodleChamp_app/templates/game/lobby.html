@@ -70,6 +70,7 @@
               console.log("removed");
             }
             chatSocket.send(JSON.stringify({
+              'type' : "DoodleChamp_app_player_joins",
               'player': "{{username}}"
             }))
           }

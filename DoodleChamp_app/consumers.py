@@ -30,15 +30,18 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
     # Receive message from a client browser over a WebSocket
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
-        self.username = text_data_json["player"]
-        print("self.username",self.username)
+        action_type = text_data_json["type"]
+        
 
         # Send message to room . Puts message on redis
-        await self.channel_layer.group_send(self.room_group_name, {"type": "DoodleChamp_app_player_joins", "player": self.username})
+
+        await self.channel_layer.group_send(self.room_group_name, {"type": "set_username", "username": text_data_json["player"]})
+        await self.channel_layer.group_send(self.room_group_name, {"type": action_type})
 
     # Receive message from room group
-    def get_players(self, name, code):
-        return Players.objects.exclude(name=name).filter(code=code)
+    async def set_username(self, event):
+        self.username = event["username"]
+        print(self.username)
         
     async def DoodleChamp_app_player_joins(self,event):
         
