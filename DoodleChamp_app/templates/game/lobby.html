@@ -30,7 +30,6 @@
     {% csrf_token %}
   </form>
 
-<<<<<<< HEAD
           chatSocket.onmessage = function(e) {
               const data = JSON.parse(e.data);
               let playerList = document.getElementById("player-list");
@@ -47,46 +46,6 @@
           chatSocket.onclose = function(e) {
               console.error('Chat socket closed unexpectedly');
           };
-=======
-  <script>
-
-    document.querySelector('#start-btn').onclick = function(e){
-      let gameCode = '{{ room_name }}';
-      console.log(gameCode)
-      window.location.pathname = '/DoodleChamp/' + gameCode + '/';
-    }
-
-    // document.querySelector('#game-code').onkeyup = function(e) {
-    //     if (e.keyCode === 13) { // enter, return
-    //         document.querySelector('#start-btn').click();
-    //     }
-    // }
-    const roomName = JSON.parse(document.getElementById('room-name').textContent);
-
-    const chatSocket = new WebSocket(
-      'ws://'
-      + window.location.host
-      + '/ws/DoodleChamp/'
-      + roomName
-      + '/'
-    );
-
-    chatSocket.onmessage = function (e) {
-      const data = JSON.parse(e.data);
-      let playerList = document.getElementById("player-list")
-      ptag = document.createElement('div');
-      ptag.innerHTML = data.player;
-      playerList.appendChild(ptag);
-    };
-    chatSocket.onopen = function (e) {
-      chatSocket.send(JSON.stringify({
-        'player': "player1"
-      }))
-    }
-    chatSocket.onclose = function (e) {
-      console.error('Chat socket closed unexpectedly');
-    };
->>>>>>> 521bca7f7669979614431704a6c464a2e5b4f69f
 
 
           // document.querySelector('#chat-message-input').focus();
