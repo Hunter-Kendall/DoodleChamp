@@ -6,7 +6,8 @@ import random
 # Create your views here.
 
 def index(request):
-    return render(request, "game/index.html")
+    lobbies = Lobby.objects.all() # To be removed. Only for testing purposes
+    return render(request, "game/index.html", {'lobbies': lobbies})
 
 def room_code():
     random_code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=4)) 
@@ -33,9 +34,9 @@ def create_lobby(request):
     # Each websocket (user) has a unique channel_name.
 
 
-def game_room(request, game_room_name):
-    # return render(request, "game/game.html", {"game_room_name": game_room_name})
-    pass 
+def game_room(request):
+    return render(request, "game/game.html", {"game_room_name": request.POST["game-code"]})
+    
 
 def join_lobby(request):
     lobby_code = request.POST["code"]
