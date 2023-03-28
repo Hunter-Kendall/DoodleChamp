@@ -54,6 +54,14 @@
           chatSocket.onmessage = function (e) {
             const data = JSON.parse(e.data);
             let playerList = document.getElementById("player-list")
+
+
+            ptag = document.createElement('p');
+            ptag.innerHTML = data.player;
+            playerList.appendChild(ptag);
+          };
+          chatSocket.onopen = function (e) {
+            let playerList = document.getElementById("player-list")          
             let pElements = playerList.getElementsByTagName('p');
 
             // Loop through all p elements and remove them from the div
@@ -61,12 +69,6 @@
               playerList.removeChild(pElements[0]);
               console.log("removed");
             }
-
-            ptag = document.createElement('p');
-            ptag.innerHTML = data.player;
-            playerList.appendChild(ptag);
-          };
-          chatSocket.onopen = function (e) {
             chatSocket.send(JSON.stringify({
               'player': "{{username}}"
             }))
