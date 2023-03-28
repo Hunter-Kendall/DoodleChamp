@@ -34,9 +34,16 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
         
 
         # Send message to room . Puts message on redis
+        if action_type == "DoodleChamp_app_player_joins":
+            await self.channel_layer.group_send(self.room_group_name, {"type": "set_username", "username": text_data_json["player"]})
+            await self.channel_layer.group_send(self.room_group_name, {"type": action_type})
+        elif action_type == "draw_stroke":
+            await self.channel_layer.group_send(self.room_group_name, {"type": action_type, "lastX": text_data_json["lastX"],
+                                                                        "lastY": text_data_json["lastY"],
+                                                                        "currentX": text_data_json["currentX"],
+                                                                        "currentY": text_data_json["currentY"]
+            })
 
-        await self.channel_layer.group_send(self.room_group_name, {"type": "set_username", "username": text_data_json["player"]})
-        await self.channel_layer.group_send(self.room_group_name, {"type": action_type})
 
     # Receive message from room group
     async def set_username(self, event):
@@ -55,5 +62,16 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
             await self.send(text_data=json.dumps({"player": user.name}))
         
         # Send player info to WebSocket
+    
+    async def draw_stroke(self, event):
+        currentX = event["currentX"]
+        currentY = event["currentY"]
+        lastX = event["lastX"]
+        lastY = event["lastY"]
+        
+        await self.send(text_data=json.dumps({"currentX": currentX,
+                                              "currentY": currentY,
+                                              "lastX": lastX,
+                                              "lastY": lastY}))
 
         

@@ -42,6 +42,17 @@
             </div>
           </div>
           <script>
+            const chatSocket = new WebSocket(
+              'ws://'
+              + window.location.host
+              + '/ws/DoodleChamp/'
+              + '{{game_room_name}}'
+              + '/'
+            );
+            chatSocket.onclose = function (e) {
+            console.error('Chat socket closed unexpectedly');
+            };
+
             function toggleButton(btn) {
               let button = document.getElementById(btn + "-btn");
 
@@ -57,6 +68,6 @@
               button.classList.add("active");
             }
           </script>
-        <script type="text/javascript" src="../../static/DoodleChamp_app/js/game.js"></script>
+          <script type="text/javascript" src="../../static/DoodleChamp_app/js/game.js"></script>
     </body>
 </html>
