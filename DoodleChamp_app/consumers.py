@@ -68,6 +68,7 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
         currentY = event["currentY"]
         lastX = event["lastX"]
         lastY = event["lastY"]
+        print(currentX, "currentX")
         
         await self.send(text_data=json.dumps({"currentX": currentX,
                                               "currentY": currentY,

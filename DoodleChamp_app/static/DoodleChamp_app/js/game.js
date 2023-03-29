@@ -87,11 +87,15 @@ canvas.addEventListener('mousedown', (event) => {
 });
 
 chatSocket.onmessage = function(e){
-  const data = JSON.parse(e.data);
+  
+  let data = JSON.parse(e.data);
+  console.log(data.lastX, "lastx", data.lastY, "lasty", data.currentX, "currentX", data.currentY, "currentY")
+  ctx.strokeStyle = colorCode;
   ctx.beginPath();
   ctx.moveTo(data.lastX, data.lastY);
   ctx.lineTo(data.currentX, data.currentY);
   ctx.stroke();
+  console.log("drawing")
 }
 canvas.addEventListener('mousemove', (event) => {
 
@@ -104,9 +108,7 @@ canvas.addEventListener('mousemove', (event) => {
     // ctx.beginPath();
     // ctx.moveTo(lastX, lastY);
     // ctx.lineTo(currentX, currentY);
-    // ctx.stroke();
-    lastX = currentX;
-    lastY = currentY;
+    // ctx.stroke();    
     chatSocket.send(JSON.stringify({
       'type': "draw_stroke",
       'lastX': lastX,
@@ -114,7 +116,10 @@ canvas.addEventListener('mousemove', (event) => {
       'currentX': currentX,
       'currentY': currentY
     }))
-  };
+   
+    lastX = currentX;
+    lastY = currentY;
+   };
 
   if (isDrawing && drawTool === 1) {
     //live rectangle view
