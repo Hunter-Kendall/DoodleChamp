@@ -71,7 +71,8 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
         lastY = event["lastY"]
         strokeStyle = event["strokeStyle"]
         
-        await self.send(text_data=json.dumps({"currentX": currentX,
+        await self.send(text_data=json.dumps({"type": "draw_stroke",
+                                              "currentX": currentX,
                                               "currentY": currentY,
                                               "lastX": lastX,
                                               "lastY": lastY,
