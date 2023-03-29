@@ -89,13 +89,16 @@ canvas.addEventListener('mousedown', (event) => {
 chatSocket.onmessage = function(e){
   
   let data = JSON.parse(e.data);
-  console.log(data.lastX, "lastx", data.lastY, "lasty", data.currentX, "currentX", data.currentY, "currentY")
-  ctx.strokeStyle = colorCode;
-  ctx.beginPath();
-  ctx.moveTo(data.lastX, data.lastY);
-  ctx.lineTo(data.currentX, data.currentY);
-  ctx.stroke();
-  console.log("drawing")
+
+  switch(data.type) {
+    case "draw_stroke":
+      ctx.strokeStyle = colorCode;
+      ctx.beginPath();
+      ctx.moveTo(data.lastX, data.lastY);
+      ctx.lineTo(data.currentX, data.currentY);
+      ctx.stroke();
+      break;
+  }
 }
 canvas.addEventListener('mousemove', (event) => {
 
