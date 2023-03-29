@@ -105,15 +105,17 @@ canvas.addEventListener('mousemove', (event) => {
     // ctx.moveTo(lastX, lastY);
     // ctx.lineTo(currentX, currentY);
     // ctx.stroke();
-    lastX = currentX;
-    lastY = currentY;
     chatSocket.send(JSON.stringify({
       'type': "draw_stroke",
       'lastX': lastX,
       'lastY': lastY,
       'currentX': currentX,
-      'currentY': currentY
+      'currentY': currentY,
+      'strokeStyle': strokeStyle
     }))
+    
+    lastX = currentX;
+    lastY = currentY;
   };
 
   if (isDrawing && drawTool === 1) {

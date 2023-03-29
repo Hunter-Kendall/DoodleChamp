@@ -41,10 +41,11 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
             await self.channel_layer.group_send(self.room_group_name, {"type": action_type, "lastX": text_data_json["lastX"],
                                                                         "lastY": text_data_json["lastY"],
                                                                         "currentX": text_data_json["currentX"],
-                                                                        "currentY": text_data_json["currentY"]
+                                                                        "currentY": text_data_json["currentY"],
+                                                                        "strokeStyle": text_data_json["strokeStyle"]
             })
 
-
+    # Action type
     # Receive message from room group
     async def set_username(self, event):
         self.username = event["username"]
@@ -68,10 +69,12 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
         currentY = event["currentY"]
         lastX = event["lastX"]
         lastY = event["lastY"]
+        strokeStyle = event["strokeStyle"]
         
         await self.send(text_data=json.dumps({"currentX": currentX,
                                               "currentY": currentY,
                                               "lastX": lastX,
-                                              "lastY": lastY}))
+                                              "lastY": lastY,
+                                              "strokeStyle": strokeStyle}))
 
         
