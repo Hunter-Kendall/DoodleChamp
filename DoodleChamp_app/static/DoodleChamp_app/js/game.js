@@ -125,9 +125,6 @@ chatSocket.onmessage = function(e){
       break;
     
     case "undo":
-      // ctx.clearRect(0, 0, canvas.width, canvas.height);
-      // console.log('case undo');
-      // console.log('case undo222');
       console.log('data pic: ' + data.pic);
       var cPic = new Image();
       cPic.onload = function () {
