@@ -16,25 +16,50 @@ function cPush() {
   cStep++;
   if (cStep < cPushArray.length) { cPushArray.length = cStep; }
   cPushArray.push(canvas.toDataURL());
+
+
+  // console.log(cPushArray.length)
+  console.log('first array ' + cPushArray[cStep])
+
 }
 cPush();
+
 function cUndo() {
+
+  // console.log('1st cstep ' + cStep)
 
   if (cStep > 0) {
     cStep--;
-    console.log(cStep);
-    var cPic = new Image();
-    cPic.onload = function () {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(cPic, 0, 0);
+    // console.log(cStep);
+    // var cPic = new Image();
+    // cPic.onload = function () {
+    //   ctx.clearRect(0, 0, canvas.width, canvas.height);
+    //   ctx.drawImage(cPic, 0, 0);
+      console.log(cPushArray[cStep]);
+      chatSocket.send(JSON.stringify({
+        'type': 'undo',
+        'pic': cPushArray[cStep]
+      }));
     }
-    cPic.src = cPushArray[cStep];
-    if (cPic.complete) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(cPic, 0, 0);
-    }
+    // console.log(cPic.complete);
+
+
+    // if (cPic.complete) {
+    //   console.log('before sending to socket');
+    //   ctx.clearRect(0, 0, canvas.width, canvas.height);
+    //   ctx.drawImage(cPic, 0, 0);
+
+    //   console.log('before sending to socket');
+    //   console.log('second array ' + cPushArray[cStep]);
+    //   chatSocket.send(JSON.stringify({
+    //     'type': 'undo',
+    //     'pic': cPic
+    //   }));
+    //   console.log('after sending to socket');
+    // }
+
   }
-}
+
 
 function toggleButton(btn) {
   let button = document.getElementById(btn + "-btn");
@@ -98,12 +123,27 @@ chatSocket.onmessage = function(e){
 
   switch(data.type) {
     case "draw_stroke":
-      ctx.strokeStyle = colorCode;
+      ctx.strokeStyle = data.strokeStyle;
       ctx.beginPath();
       ctx.moveTo(data.lastX, data.lastY);
       ctx.lineTo(data.currentX, data.currentY);
       ctx.stroke();
       break;
+    
+    case "undo":
+      // ctx.clearRect(0, 0, canvas.width, canvas.height);
+      // console.log('case undo');
+      // console.log('case undo222');
+      console.log('data pic: ' + data.pic);
+      var cPic = new Image();
+      cPic.onload = function () {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(cPic, 0, 0);
+      }
+      cPic.src = data.pic;
+      console.log('case undo2');
+      break;
+
   }
 }
 canvas.addEventListener('mousemove', (event) => {
@@ -114,16 +154,17 @@ canvas.addEventListener('mousemove', (event) => {
     const currentX = event.clientX - canvas.offsetLeft;
     const currentY = event.clientY - canvas.offsetTop;
     ctx.strokeStyle = colorCode
-    // ctx.beginPath();
-    // ctx.moveTo(lastX, lastY);
-    // ctx.lineTo(currentX, currentY);
-    // ctx.stroke();    
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(currentX, currentY);
+    ctx.stroke();    
     chatSocket.send(JSON.stringify({
       'type': "draw_stroke",
       'lastX': lastX,
       'lastY': lastY,
       'currentX': currentX,
-      'currentY': currentY
+      'currentY': currentY,
+      'strokeStyle': colorCode
     }))
    
     lastX = currentX;

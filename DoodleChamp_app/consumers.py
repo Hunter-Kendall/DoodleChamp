@@ -43,12 +43,16 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
             await self.channel_layer.group_send(self.room_group_name, {"type": action_type, "lastX": text_data_json["lastX"],
                                                                         "lastY": text_data_json["lastY"],
                                                                         "currentX": text_data_json["currentX"],
-                                                                        "currentY": text_data_json["currentY"]
+                                                                        "currentY": text_data_json["currentY"],
+                                                                        "strokeStyle": text_data_json["strokeStyle"]
             })
         elif action_type == "print_name":
             await self.channel_layer.group_send(self.room_group_name, {"type": action_type})
+        elif action_type == "undo":
+            print(text_data_json["pic"])
+            await self.channel_layer.group_send(self.room_group_name, {"type": action_type, "pic": text_data_json["pic"]})
 
-
+    # Action types
     # Receive message from room group
     
     async def set_username(self, event):
@@ -80,11 +84,19 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
         lastX = event["lastX"]
         lastY = event["lastY"]
         #print(currentX, "currentX")
+        strokeStyle = event["strokeStyle"]
         
         await self.send(text_data=json.dumps({"type": "draw_stroke",
                                               "currentX": currentX,
                                               "currentY": currentY,
-                                              "lastX": lastX,
-                                              "lastY": lastY}))  
+                                              "lastX": lastX, 
+                                              "lastY": lastY,
+                                              "strokeStyle": strokeStyle}))
+        
+    async def undo(self, event):
+        pic = event["pic"]
+
+        await self.send(text_data=json.dumps({"type": "undo",
+                                              "pic": pic}))
 
         
