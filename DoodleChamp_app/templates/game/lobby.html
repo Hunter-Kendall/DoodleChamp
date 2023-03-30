@@ -27,8 +27,10 @@
     <input type="hidden" value="{{ room_name }}" name="game-code">
     
     <button id="start-btn">Start Game</button><br><br>
+    
     {% csrf_token %}
   </form>
+  <button id="test-btn">Start test</button>
   <script>
            document.querySelector('#start-btn').onclick = function(e){
             let gameCode = '{{ room_name }}';
@@ -42,6 +44,12 @@
           //     }
           // }
           const roomName = JSON.parse(document.getElementById('room-name').textContent);
+          document.querySelector('#test-btn').onclick = function(e){
+            chatSocket.send(JSON.stringify({
+              'type' : "print_name",
+          
+            }))
+          }
 
           const chatSocket = new WebSocket(
             'ws://'
@@ -52,13 +60,27 @@
           );
 
           chatSocket.onmessage = function (e) {
-            const data = JSON.parse(e.data);
-            let playerList = document.getElementById("player-list")
+            let data = JSON.parse(e.data);
+            let playerList = document.getElementById("player-list");
 
+            switch(data.type) {
+              case "add_players":
+                ptag = document.createElement('p');
+                ptag.innerHTML = data.player;
+                playerList.appendChild(ptag);
+                break;
+              case "delete_players":
+                  //let playerList = document.getElementById("player-list");        
+                  let pElements = playerList.getElementsByTagName('p');
 
-            ptag = document.createElement('p');
-            ptag.innerHTML = data.player;
-            playerList.appendChild(ptag);
+                  // Loop through all p elements and remove them from the div
+                  while (pElements.length > 0) {
+                    playerList.removeChild(pElements[0]);
+                    console.log("removed");
+                  }
+                break;
+            }
+            
           };
           chatSocket.onopen = function (e) {
             let playerList = document.getElementById("player-list")          
