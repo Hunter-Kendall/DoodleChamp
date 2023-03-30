@@ -30,11 +30,15 @@
     
     {% csrf_token %}
   </form>
-  <button id="test-btn" disabled>Start test</button>
+  <button id="start-btn">Start Game</button><br><br>
+  <button id="test-btn">Start test</button>
   <script>
+          document.querySelector('#start-btn').onclick = function(e){
+            chatSocket.send(JSON.stringify({
+              'type' : "start_game",
           
-            
-
+            }))
+          }
 
           // document.querySelector('#game-code').onkeyup = function(e) {
           //     if (e.keyCode === 13) { // enter, return
@@ -84,7 +88,7 @@
             
           };
           chatSocket.onopen = function (e) {
-            let playerList = document.getElementById("player-list");
+            let playerList = document.getElementById("player-list")          
             let pElements = playerList.getElementsByTagName('p');
 
             // Loop through all p elements and remove them from the div

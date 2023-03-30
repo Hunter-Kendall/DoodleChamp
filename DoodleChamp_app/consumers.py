@@ -50,6 +50,8 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
             await self.channel_layer.group_send(self.room_group_name, {"type": action_type})
         elif action_type == "undo":
             await self.channel_layer.group_send(self.room_group_name, {"type": action_type, "pic": text_data_json["pic"]})
+        elif action_type == "start_game":
+            await self.channel_layer.group_send(self.room_group_name, {"type": action_type})
 
     # Action types
     # Receive message from room group
@@ -59,7 +61,7 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
         print(self.username)
     
     async def print_name(self, event):
-        print(self.username)
+        print("t", self.username)
         
     async def DoodleChamp_app_player_joins(self,event):
         print(self.username)
@@ -98,5 +100,8 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
 
         await self.send(text_data=json.dumps({"type": "undo",
                                               "pic": pic}))
+    
+    async def start_game(self, event):
+        await self.send(text_data=json.dumps({"type": "start_game"}))
 
         
