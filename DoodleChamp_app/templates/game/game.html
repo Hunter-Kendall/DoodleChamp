@@ -1,73 +1,87 @@
 <!DOCTYPE html>
 <html>
-    <header>
-        <meta charset="utf-8"/>
-        <title>DoodleChamp lobby</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-        {% load static %}
-      </header>
-    <body>
-        <h2>Join code: {{ game_room_name }}</h2>
+<header>
+  <meta charset="utf-8" />
+  <title>DoodleChamp lobby</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+  {% load static %}
+</header>
 
-        {{ game_room_name|json_script:"room-name" }}
-                      
-        <div class="container text-center">
-            <div class="row">
-                <div class="col border">word</div>
-            </div>
-            <div class="row">
-              <div class="col border">
-                Player List
-              </div>
-              <div class="col border">
-                <canvas id="draw-area" class = "border"></canvas>
-              </div>
-              <div id="chat" class="col border">
-                chat
-                <input id="chat-field" type="text">
-                <button id="guess-btn">guess</button>
-                <div id="draw" class="col border">
-              </div>
-              <br>
-              <div>
-                  Draw
-                    <button id="pencil-btn" class="btn-sm" onclick="toggleButton(toString(pencil))">&#9998</button>
-                    <button id="rectangle-btn" class="btn-sm" onclick="toggleButton(toString(rectangle))" >&#11036</button>
-                    <button id="line-btn" class="btn-sm" onclick="toggleButton(toString(line))">&#8213</button>
-                    <button id="circle-btn" class="btn-sm" onclick="toggleButton(toString(circle))">&#x25EF</button>
-                    <button id="undo-btn">undo</button>
-                    <input type="Color" id="color-val" name="" class="form-control form-control-color" value="#000000">
-              </div>
-            </div>
+<body>
+  <h2>Join code: {{ game_room_name }}</h2>
+
+  {{ game_room_name|json_script:"room-name" }}
+
+  <div class="container text-center">
+    <div class="row">
+      <div class="col border">word</div>
+    </div>
+    <div class="row">
+      <div class="col border">
+        Player List
+      </div>
+      <div class="col border">
+        <canvas id="draw-area" class="border"></canvas>
+      </div>
+      <div id="chat" class="col border">
+        chat
+        <input id="chat-field" type="text">
+        <button id="guess-btn">guess</button>
+        <div id="draw" class="col border">
+        </div>
+        <br>
+        <div>
+          Draw
+          <button id="pencil-btn" class="btn-sm" onclick="pencil">&#9998</button>
+          <button id="rectangle-btn" class="btn-sm" onclick="rectangle">&#11036</button>
+          <button id="line-btn" class="btn-sm" onclick="line">&#8213</button>
+          <button id="circle-btn" class="btn-sm" onclick="circle">&#x25EF</button>
+          <button id="undo-btn">undo</button>
+          <input type="Color" id="color-val" name="" class="form-control form-control-color" value="#000000">
+        </div>
+      </div>
+    </div><br>
+
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+      See Words
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Words</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
-          <script>
-            const chatSocket = new WebSocket(
-              'ws://'
-              + window.location.host
-              + '/ws/DoodleChamp/'
-              + '{{game_room_name}}'
-              + '/'
-            );
-            chatSocket.onclose = function (e) {
-            console.error('Chat socket closed unexpectedly');
-            };
+          <div class="modal-body">
+            Word1 Word2
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
-            function toggleButton(btn) {
-              let button = document.getElementById(btn + "-btn");
+    <script>
+      const chatSocket = new WebSocket(
+        'ws://'
+        + window.location.host
+        + '/ws/DoodleChamp/'
+        + '{{game_room_name}}'
+        + '/'
+      );
+      chatSocket.onclose = function (e) {
+        console.error('Chat socket closed unexpectedly');
+      };
 
-              if (button.classList.contains("active")) {
-                return;
-              }
+    </script>
+    <script type="text/javascript" src="../../static/DoodleChamp_app/js/game.js"></script>
+</body>
 
-              let buttons = document.getElementsByClassName("btn-sm");
-              for (var i = 0; i < buttons.length; i++) {
-                buttons[i].classList.remove("active");
-              }
-
-              button.classList.add("active");
-            }
-          </script>
-          <script type="text/javascript" src="../../static/DoodleChamp_app/js/game.js"></script>
-    </body>
 </html>

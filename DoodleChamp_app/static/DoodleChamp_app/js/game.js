@@ -18,7 +18,6 @@ function cPush() {
   cPushArray.push(canvas.toDataURL());
 
 
-  // console.log(cPushArray.length)
   console.log('first array ' + cPushArray[cStep])
 
 }
@@ -26,55 +25,16 @@ cPush();
 
 function cUndo() {
 
-  // console.log('1st cstep ' + cStep)
-
   if (cStep > 0) {
     cStep--;
-    // console.log(cStep);
-    // var cPic = new Image();
-    // cPic.onload = function () {
-    //   ctx.clearRect(0, 0, canvas.width, canvas.height);
-    //   ctx.drawImage(cPic, 0, 0);
       console.log(cPushArray[cStep]);
+      // Drawer sending 
       chatSocket.send(JSON.stringify({
         'type': 'undo',
         'pic': cPushArray[cStep]
       }));
     }
-    // console.log(cPic.complete);
-
-
-    // if (cPic.complete) {
-    //   console.log('before sending to socket');
-    //   ctx.clearRect(0, 0, canvas.width, canvas.height);
-    //   ctx.drawImage(cPic, 0, 0);
-
-    //   console.log('before sending to socket');
-    //   console.log('second array ' + cPushArray[cStep]);
-    //   chatSocket.send(JSON.stringify({
-    //     'type': 'undo',
-    //     'pic': cPic
-    //   }));
-    //   console.log('after sending to socket');
-    // }
-
   }
-
-
-function toggleButton(btn) {
-  let button = document.getElementById(btn + "-btn");
-
-  if (button.classList.contains("active")) {
-    return;
-  }
-
-  let buttons = document.getElementsByClassName("btn btn-secondary btn-sm");
-  for (var i = 0; i < buttons.length; i++) {
-    buttons[i].classList.remove("active");
-  }
-
-  button.classList.add("active");
-}
 
 document.querySelector('#pencil-btn').onclick = function (e) {
   drawTool = 0;
@@ -117,6 +77,7 @@ chatSocket.onopen = function (e){
 
 }
 
+// Client getting the messages
 chatSocket.onmessage = function(e){
   
   let data = JSON.parse(e.data);
@@ -184,11 +145,6 @@ canvas.addEventListener('mousemove', (event) => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(cPic_rect, 0, 0);
     }
-
-    // if (cPic_rect.complete) {
-    //     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    //     ctx.drawImage(cPic_rect, 0, 0);
-    // }
 
     ctx.beginPath();
     ctx.rect(lastX, lastY, currentX - lastX, currentY - lastY);

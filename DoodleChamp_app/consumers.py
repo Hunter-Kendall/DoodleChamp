@@ -49,7 +49,6 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
         elif action_type == "print_name":
             await self.channel_layer.group_send(self.room_group_name, {"type": action_type})
         elif action_type == "undo":
-            print(text_data_json["pic"])
             await self.channel_layer.group_send(self.room_group_name, {"type": action_type, "pic": text_data_json["pic"]})
 
     # Action types
@@ -93,6 +92,7 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
                                               "lastY": lastY,
                                               "strokeStyle": strokeStyle}))
         
+    # Sends to non-drawers
     async def undo(self, event):
         pic = event["pic"]
 
