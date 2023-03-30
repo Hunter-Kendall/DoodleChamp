@@ -27,7 +27,7 @@ def create_lobby(request):
     Players.objects.create(code = lobby_code, name = username)
 
     # Pass in the room name (or room_id) and the user_name to be rendered on the page.
-    return render(request, "game/lobby.html", {"room_name": code, "username": username})#this is where we set room id
+    return render(request, "game/lobby_host.html", {"room_name": code, "username": username})#this is where we set room id
     # In lobby.html, have the websocket connect and pass withit the room_id and user_name.
     # In the consumer, create a group for this game.
     # Coordinate communications between websockets and javascript.
@@ -42,9 +42,13 @@ def join_lobby(request):
     lobby_code = request.POST["code"]
     username = request.POST["name"]
     lobby_filter = Lobby.objects.filter(code = lobby_code)
+    name_check = Players.objects.filter(code = lobby_code, name = username)
     if len(lobby_filter.values()) == 1:
-        code = Lobby.objects.get(code = lobby_code)
-        Players.objects.create(code = code, name = username)
-        return render(request, "game/lobby.html", {"room_name": lobby_code, "username": username})
+        if len(name_check.values()) == 1:
+            return render(request, "game/lobby.html", {"room_name": lobby_code, "username": username})
+        else:
+            code = Lobby.objects.get(code = lobby_code)
+            Players.objects.create(code = code, name = username)
+            return render(request, "game/lobby.html", {"room_name": lobby_code, "username": username})
     else:
         pass
