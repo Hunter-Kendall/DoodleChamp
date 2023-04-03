@@ -27,14 +27,22 @@ function cUndo() {
 
   if (cStep > 0) {
     cStep--;
-      console.log(cPushArray[cStep]);
-      // Drawer sending 
-      chatSocket.send(JSON.stringify({
-        'type': 'undo',
-        'pic': cPushArray[cStep]
-      }));
-    }
+    console.log(cPushArray[cStep]);
+    // Drawer sending 
+    chatSocket.send(JSON.stringify({
+      'type': 'undo',
+      'pic': cPushArray[cStep]
+    }));
   }
+}
+
+function seeWords() {
+  console.log('seeWords() called')
+  chatSocket.send(JSON.stringify({
+    'type': 'see_words',
+    'pic': cPushArray[cStep]
+  }));
+}
 
 document.querySelector('#pencil-btn').onclick = function (e) {
   drawTool = 0;
@@ -58,6 +66,10 @@ document.querySelector('#undo-btn').onclick = function () {
 
 document.querySelector('#color-val').onchange = function () {
   colorCode = document.querySelector('#color-val').value;
+};
+
+document.querySelector('#see-words').onclick = function () {
+  seeWords();
 };
 
 
@@ -100,6 +112,11 @@ chatSocket.onmessage = function(e){
       }
       cPic.src = data.pic;
       console.log('case undo2');
+      break;
+    
+    case "see_words":
+      console.log('word: ' + data.word)
+      console.log('value: ' + data.value)
       break;
 
   }
