@@ -21,4 +21,5 @@ class Players(models.Model):
                 verbose_name ='ID')
     code = models.ForeignKey(Lobby, default=1, on_delete=models.CASCADE)
     name = models.TextField()
+    isDrawer = models.BooleanField(default=False)
     

@@ -1,5 +1,6 @@
 const canvas = document.getElementById("draw-area");
 const ctx = canvas.getContext("2d");
+const username = "{{username}}";
 let cPushArray = new Array();
 let cStep = -1;
 let isDrawing = false;
@@ -11,6 +12,7 @@ let rectX = 0;
 let rectY = 0;
 let background = null;
 var cPic_rect = new Image();
+
 
 function cPush() {
   cStep++;
@@ -36,30 +38,40 @@ function cUndo() {
     }
   }
 
-document.querySelector('#pencil-btn').onclick = function (e) {
-  drawTool = 0;
-};
+// document.querySelector('#pencil-btn').onclick = function (e) {
+//   drawTool = 0;
+// };
 
-document.querySelector('#rectangle-btn').onclick = function (e) {
-  drawTool = 1;
-};
+// document.querySelector('#rectangle-btn').onclick = function (e) {
+//   drawTool = 1;
+// };
 
-document.querySelector('#line-btn').onclick = function (e) {
-  drawTool = 2;
-};
+// document.querySelector('#line-btn').onclick = function (e) {
+//   drawTool = 2;
+// };
 
-document.querySelector('#circle-btn').onclick = function (e) {
-  drawTool = 3;
-};
+// document.querySelector('#circle-btn').onclick = function (e) {
+//   drawTool = 3;
+// };
 
-document.querySelector('#undo-btn').onclick = function () {
-  cUndo();
-};
+// document.querySelector('#undo-btn').onclick = function () {
+//   cUndo();
+// };
 
-document.querySelector('#color-val').onchange = function () {
-  colorCode = document.querySelector('#color-val').value;
+// document.querySelector('#color-val').onchange = function () {
+//   colorCode = document.querySelector('#color-val').value;
+// };
+document.querySelector('#test-btn').onclick = function () {
+  chatSocket.send(JSON.stringify({
+    'type': "draw_turn"
+  }))
 };
-
+document.querySelector('#end-btn').onclick = function () {
+  console.log("test");
+  chatSocket.send(JSON.stringify({
+    'type': "turn_ended"
+  }))
+};
 
 canvas.addEventListener('mousedown', (event) => {
 
@@ -79,7 +91,7 @@ chatSocket.onopen = function (e){
 
 // Client getting the messages
 chatSocket.onmessage = function(e){
-  
+  let draw_tool_row = document.getElementById('draw-tools');
   let data = JSON.parse(e.data);
 
   switch(data.type) {
@@ -101,7 +113,40 @@ chatSocket.onmessage = function(e){
       cPic.src = data.pic;
       console.log('case undo2');
       break;
+    case "draw_turn":
+      
+      draw_tool_row.innerHTML = '<div id="draw-buttons"> Draw <button id="pencil-btn" class="btn-sm" onclick="pencil">&#9998</button> <button id="rectangle-btn" class="btn-sm" onclick="rectangle">&#11036</button><button id="line-btn" class="btn-sm" onclick="line">&#8213</button><button id="circle-btn" class="btn-sm" onclick="circle">&#x25EF</button><button id="undo-btn">undo</button><input type="Color" id="color-val" name="" class="form-control form-control-color" value="#000000"></div>';
+      document.querySelector('#pencil-btn').onclick = function (e) {
+        drawTool = 0;
+      };
+      
+      document.querySelector('#rectangle-btn').onclick = function (e) {
+        drawTool = 1;
+      };
+      
+      document.querySelector('#line-btn').onclick = function (e) {
+        drawTool = 2;
+      };
+      
+      document.querySelector('#circle-btn').onclick = function (e) {
+        drawTool = 3;
+      };
+      
+      document.querySelector('#undo-btn').onclick = function () {
+        cUndo();
+      };
+      
+      document.querySelector('#color-val').onchange = function () {
+        colorCode = document.querySelector('#color-val').value;
+      };
+    case "turn_ended":
+      draw_tool_row.innerHTML = "";
 
+      draw_tool = -1;
+      console.log("w");
+      break;
+
+      
   }
 }
 canvas.addEventListener('mousemove', (event) => {
