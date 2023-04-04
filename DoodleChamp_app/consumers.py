@@ -83,10 +83,15 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
         elif action_type == "print_name":
             await self.channel_layer.group_send(self.room_group_name, {"type": action_type})
         elif action_type == "undo":
+            print(text_data_json["pic"])
             await self.channel_layer.group_send(self.room_group_name, {"type": action_type, "pic": text_data_json["pic"]})
         elif action_type == "start_game":
             await self.channel_layer.group_send(self.room_group_name, {"type": action_type})
         elif action_type == "see_words":
+            await self.channel_layer.group_send(self.room_group_name, {"type": action_type})
+        elif action_type == "draw_turn":
+            await self.channel_layer.group_send(self.room_group_name, {"type": action_type})
+        elif action_type == "turn_ended":
             await self.channel_layer.group_send(self.room_group_name, {"type": action_type})
 
     # Action types
@@ -149,3 +154,10 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
         word2 = random.choice(words)
 
         await self.send(text_data=json.dumps({"type": "see_words", "word1": word1.word, "value1": word1.point_value, "word2": word2.word, "value2": word2.point_value}))
+    
+    async def draw_turn(self, event):
+        await self.send(text_data=json.dumps({"type": "draw_turn"}))
+        
+    async def turn_ended(self, event):
+        print("turn_ended")
+        await self.send(text_data=json.dumps({"type": "turn_ended"}))

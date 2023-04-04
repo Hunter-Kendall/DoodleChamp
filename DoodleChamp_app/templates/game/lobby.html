@@ -25,7 +25,7 @@
   
   <form id="jsform" action="Game" method = "POST">
     <input type="hidden" value="{{ room_name }}" name="game-code">
-    
+    <input type="hidden" value="{{username}}" name="username">
     
     
     {% csrf_token %}
