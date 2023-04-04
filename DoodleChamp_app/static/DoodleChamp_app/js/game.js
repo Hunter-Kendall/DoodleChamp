@@ -4,7 +4,7 @@ const username = "{{username}}";
 let cPushArray = new Array();
 let cStep = -1;
 let isDrawing = false;
-let drawTool = 0;
+let drawTool = -1;
 let colorCode = 0;
 let lastX = 0;
 let lastY = 0;
@@ -66,6 +66,7 @@ document.querySelector('#test-btn').onclick = function () {
     'type': "draw_turn"
   }))
 };
+
 document.querySelector('#end-btn').onclick = function () {
   console.log("test");
   chatSocket.send(JSON.stringify({
@@ -114,7 +115,7 @@ chatSocket.onmessage = function(e){
       console.log('case undo2');
       break;
     case "draw_turn":
-      
+      drawTool = 0;
       draw_tool_row.innerHTML = '<div id="draw-buttons"> Draw <button id="pencil-btn" class="btn-sm" onclick="pencil">&#9998</button> <button id="rectangle-btn" class="btn-sm" onclick="rectangle">&#11036</button><button id="line-btn" class="btn-sm" onclick="line">&#8213</button><button id="circle-btn" class="btn-sm" onclick="circle">&#x25EF</button><button id="undo-btn">undo</button><input type="Color" id="color-val" name="" class="form-control form-control-color" value="#000000"></div>';
       document.querySelector('#pencil-btn').onclick = function (e) {
         drawTool = 0;
@@ -139,10 +140,11 @@ chatSocket.onmessage = function(e){
       document.querySelector('#color-val').onchange = function () {
         colorCode = document.querySelector('#color-val').value;
       };
+      break;
     case "turn_ended":
       draw_tool_row.innerHTML = "";
 
-      draw_tool = -1;
+      drawTool = -1; // means no tool selected
       console.log("w");
       break;
 
