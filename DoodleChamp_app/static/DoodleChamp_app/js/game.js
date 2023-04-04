@@ -39,8 +39,7 @@ function cUndo() {
 function seeWords() {
   console.log('seeWords() called')
   chatSocket.send(JSON.stringify({
-    'type': 'see_words',
-    'pic': cPushArray[cStep]
+    'type': 'see_words'
   }));
 }
 
@@ -93,6 +92,7 @@ chatSocket.onopen = function (e){
 chatSocket.onmessage = function(e){
   
   let data = JSON.parse(e.data);
+  let wordList = document.getElementById("words-list")
 
   switch(data.type) {
     case "draw_stroke":
@@ -115,8 +115,13 @@ chatSocket.onmessage = function(e){
       break;
     
     case "see_words":
-      console.log('word: ' + data.word)
-      console.log('value: ' + data.value)
+      console.log('word1: ' + data.word1)
+      console.log('value1: ' + data.value1)
+      console.log('word2: ' + data.word2)
+      console.log('value2: ' + data.value2)
+      ptag = document.createElement('p');
+      ptag.innerHTML = data.word1 + ' -> ' + data.value1 + '<br>' + data.word2 + ' -> ' + data.value2;
+      wordList.appendChild(ptag);
       break;
 
   }

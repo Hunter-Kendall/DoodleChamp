@@ -1,41 +1,46 @@
 import json
 from DoodleChamp_app.models import Lobby, Players, Words
+from DoodleChamp_app.words import word_list, word_dict
 from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import sync_to_async, async_to_sync
 import random
-def get_players(code):
-        lobby_code = code[-4:]
-        return list(Players.objects.filter(code = lobby_code))
+# from django.db.models.functions import Rand
 
-        # return Players.objects.exclude(name=name).filter(code=code)
+def get_players(code):
+    lobby_code = code[-4:]
+    return list(Players.objects.filter(code = lobby_code))
+
+    # return Players.objects.exclude(name=name).filter(code=code)
+
 
 def add_words():
-    words= "alligator, america, angle, ant, applause, apple, arch, arm, army, artist, avocado, baby, backbone, bag, baker, ball, band, baseball, basin, basket, bath, bathroom, battery, bed, bedbug, bee, beehive, bell, berry, bicycle, bird, birthday cake, birthday, blade, bleach, board, boat, bomb, bone, bonnet, book, boot, bottle, bow tie, box, boy, brain, brake, branch, brick, bridge, bruise, brush, bucket, bulb, button, cabin, cake, camera, card, cardboard, carriage, cart, cat, ceiling, chain, chalk, chameleon, charger, cheerleader, cheese, chef, chess, chime, chin, church, circle, circus, cliff, cloak, clock, cloud, coach, coal, coat, collar, comb, comedian, computer, convertible, cord, cow, cowboy, cruise, crust, cup, cupcake, curtain, cushion, darts, deep, dent, dentist, diving, dog, doghouse, door, doormat, drain, drawer, dream, dress, drip, drop, dust, ear, egg, electricity, engine, extension cord, eye, face, farm, feather, finger, firefighter, fireman, fish, fizz, flag, flagpole, floor, flute, fly, fog, foot, fork, fowl, frame, french fries, frog, garbage, garden, garfield, gate, giant, girl, glove, goat, goblin, golden retriever, gun, hair dryer, hair, hammer, hand, handle, hat, head, headphones, heart, hockey, hook, hopscotch, horn, horse, hospital, hot dog, hot tub, house, houseboat, hurdle, internet, island, jewel, joke, kettle, key, knee, kneel, knife, knight, knot, koala, lace, lap, lawnmower, leaf, leak, leg, light bulb, lighthouse, line, lip, lock, mailman, map, mascot, match, mattress, money, monkey, moon, mouth, muscle, mushroom, music, nail, nature, neck, needle, neet, nerve, net, newspaper, nightmare, nose, nut, oar, office, orange, outside, oven, owl, pajamas, parcel, park, password, peach, pen, pencil, pharmacist, photograph, picnic, picture, pig, pilot, pin, pineapple, ping pong, pinwheel, pipe, pirate, plane, plank, plate, plough, pocket, pool, popsicle, post office, pot, potato, prison, pump, puppet, purse, queen, quilt, raft, rail, raincoat, rat, ray, receipt, ring, rod, roof, root, rug, safe, sail, salmon, salt and pepper, sandbox, scale, school, scissors, screw, season, seed, shallow, shampoo, sheep, sheets, shelf, ship, shirt, shoe, shrink, skate, ski, skin, skirt, sleep, snake, sneeze, snowball, sock, song, spade, speakers, sponge, spoon, spring, sprinkler, square, stamp, star, state, station, stem, stick, stingray, stocking, stomach, store, street, suitcase, sun, sunburn, sushi, swamp, sweater, table, tail, teapot, thief, think, thread, throat, thumb, ticket, time machine, tiptoe, toe, tongue, tooth, town, train, tray, treasure, tree, trip, trousers, turtle, tusk, tv, umbrella, violin, wall, watch, watering can, wax, wedding dress, wheel, whip, whistle, wig, window, wing, wire, worm, yardstick, zoo"
-    word_list = words.split(sep=", ")
-    word_dict = {}
-    for i in word_list:
-        length = len(i)
-        if length <= 4:
-            word_dict[i] = 50
-        elif length <= 7:
-            word_dict[i] = 100
-        elif length <= 11:
-            word_dict[i] = 150
-        elif length > 11:
-            word_dict[i] = 200
+    words_count = Words.objects.all()
+    if words_count == 0: 
+        for i in word_list:
+            length = len(i)
+            if length <= 4:
+                word_dict[i] = 50
+            elif length <= 7:
+                word_dict[i] = 100
+            elif length <= 11:
+                word_dict[i] = 150
+            elif length > 11:
+                word_dict[i] = 200
 
-    word_ = {}
+        for i in word_list:
+            Words.objects.create(word = i, point_value = word_dict[i])
+    else:
+        pass
 
-    for i in word_list:
-                Words.objects.create(word = i, point_value = word_dict[i])
-
-    return list(Words.objects)
 
 def get_words():
-    random_key = random.choice(list(Words.objects.keys()))
-    random_value = Word.objects[random_key]
-    print(f'Random value: {random_value}. Random key: {random_key}')
-    return random_value, random_key
+    # count = Words.objects.count()
+    # random_index = random.randint(0, count - 1)
+    # random_obj = Words.objects.all()[random_index]
+    # return list(random_obj)
+    # add_words()
+    words = Words.objects.all()
+    return list(words)
 
 class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
     # def __init__(self):
@@ -132,18 +137,15 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({"type": "undo",
                                               "pic": pic}))
     
-    async def see_words(self, event):
-        await self.send(text_data=json.dumps({"type": "see_words"}))
+    async def start_game(self, event):
         add_words()
-        words = await sync_to_async(get_words)
-        #print(users)
+        await self.send(text_data=json.dumps({"type": "start_game"}))
+    
+    async def see_words(self, event):
+        # await self.send(text_data=json.dumps({"type": "see_words"}))
+        words = await sync_to_async(get_words)()
 
-        # await self.send(text_data=json.dumps({"type": "delete_players"}))
+        word1 = random.choice(words)
+        word2 = random.choice(words)
 
-        # print("users", users)
-        for word in words:
-            # print(user.name)
-            # name = user.values()["name"]
-            await self.send(text_data=json.dumps({"type": "see_words", "word": word.word, "value": word.point_value}))
-
-        
+        await self.send(text_data=json.dumps({"type": "see_words", "word1": word1.word, "value1": word1.point_value, "word2": word2.word, "value2": word2.point_value}))
