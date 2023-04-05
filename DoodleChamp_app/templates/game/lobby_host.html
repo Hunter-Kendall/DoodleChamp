@@ -96,6 +96,7 @@
               playerList.removeChild(pElements[0]);
               console.log("removed");
             }
+            console.log("connect");
             chatSocket.send(JSON.stringify({
               'type' : "DoodleChamp_app_player_joins",
               'player': "{{username}}"

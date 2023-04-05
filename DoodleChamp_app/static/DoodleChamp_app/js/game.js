@@ -94,12 +94,8 @@ canvas.addEventListener('mousedown', (event) => {
 
 
 });
-chatSocket.onopen = function (e){
-  chatSocket.send(JSON.stringify({
-    'type': "get_player_list"
-  }))
 
-}
+
 
 // Client getting the messages
 chatSocket.onmessage = function(e){
