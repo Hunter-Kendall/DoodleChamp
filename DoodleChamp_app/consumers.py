@@ -192,13 +192,17 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
     async def draw_turn(self, event):
         drawer = await sync_to_async(get_drawer)(code = self.room_group_name)
         print("drawer", drawer)
+        await self.send(text_data=json.dumps({"type": "show_drawer", "player": drawer[0].name}))
         await self.send(text_data=json.dumps({"type": "draw_turn", "player": drawer[0].name}))
+        
+
 
     async def turn_ended(self, event):
         # await sync_to_async(player_rotate)(code = self.room_group_name)
         await self.send(text_data=json.dumps({"type": "turn_ended"}))
 
     
+    # async def round_start(self, event):
         
     # async def game(self, event):
     #     #first player in self.player_rotation should be selected and given permission to draw

@@ -138,6 +138,23 @@ chatSocket.onmessage = function(e){
       cPic.src = data.pic;
       console.log('case undo2');
       break;
+    case "show_drawer":
+      
+        let curr_drawer = document.getElementsByClassName("isDrawer");
+        if (curr_drawer.length > 0){
+          curr_drawer[0].classList.remove("isDrawer");
+        }
+
+        var pElems = document.getElementsByTagName("p");
+        for (var i = 0; i < pElems.length; i++) {
+          console.log(pElems[i].innerHTML);
+          if (pElems[i].innerHTML === data.player) {
+            console.log(data.player);
+            pElems[i].classList.add("isDrawer");
+          }
+        }
+        
+      break;
     case "draw_turn":
       if (data.player === username){
         drawTool = 0;
