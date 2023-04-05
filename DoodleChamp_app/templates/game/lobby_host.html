@@ -82,6 +82,10 @@
                   }
                 break;
               case "start_game":
+                chatSocket.send(JSON.stringify({
+                'type' : "set_player_list",
+            
+                }))
                 document.getElementById('jsform').submit();
                 break;
             }
