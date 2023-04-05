@@ -14,8 +14,7 @@ def get_players(code):
 
 
 def add_words():
-    words_count = Words.objects.all()
-    if words_count == 0: 
+    if not Words.objects.exists(): 
         for i in word_list:
             length = len(i)
             if length <= 4:
@@ -143,7 +142,7 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
                                               "pic": pic}))
     
     async def start_game(self, event):
-        add_words()
+        await sync_to_async(add_words)()
         await self.send(text_data=json.dumps({"type": "start_game"}))
     
     async def see_words(self, event):
