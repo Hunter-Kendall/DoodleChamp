@@ -82,17 +82,13 @@
                   }
                 break;
               case "start_game":
-                chatSocket.send(JSON.stringify({
-                'type' : "set_player_list",
-            
-                }))
                 document.getElementById('jsform').submit();
                 break;
             }
             
           };
           chatSocket.onopen = function (e) {
-            let playerList = document.getElementById("player-list")          
+            let playerList = document.getElementById("player-list");         
             let pElements = playerList.getElementsByTagName('p');
 
             // Loop through all p elements and remove them from the div
