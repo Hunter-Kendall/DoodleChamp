@@ -55,7 +55,7 @@ def curr_word(code):
     return word.active_word
 def add_words():
     words_count = Words.objects.all()
-    print(words_count.count())
+    # print(words_count.count())
     if words_count.count() == 0: 
         for i in word_list:
             length = len(i)
