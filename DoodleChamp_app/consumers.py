@@ -1,12 +1,46 @@
 import json
-from DoodleChamp_app.models import Lobby, Players
+from DoodleChamp_app.models import Lobby, Players, Words
+from DoodleChamp_app.words import word_list, word_dict
 from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import sync_to_async, async_to_sync
-def get_players(code):
-        lobby_code = code[-4:]
-        return list(Players.objects.filter(code = lobby_code))
+import random
+# from django.db.models.functions import Rand
 
-        #return Players.objects.exclude(name=name).filter(code=code)
+def get_players(code):
+    lobby_code = code[-4:]
+    return list(Players.objects.filter(code = lobby_code))
+
+    # return Players.objects.exclude(name=name).filter(code=code)
+
+
+def add_words():
+    words_count = Words.objects.all()
+    if words_count == 0: 
+        for i in word_list:
+            length = len(i)
+            if length <= 4:
+                word_dict[i] = 50
+            elif length <= 7:
+                word_dict[i] = 100
+            elif length <= 11:
+                word_dict[i] = 150
+            elif length > 11:
+                word_dict[i] = 200
+
+        for i in word_list:
+            Words.objects.create(word = i, point_value = word_dict[i])
+    else:
+        pass
+
+
+def get_words():
+    # count = Words.objects.count()
+    # random_index = random.randint(0, count - 1)
+    # random_obj = Words.objects.all()[random_index]
+    # return list(random_obj)
+    # add_words()
+    words = Words.objects.all()
+    return list(words)
 
 class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
     # def __init__(self):
@@ -52,6 +86,8 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
             print(text_data_json["pic"])
             await self.channel_layer.group_send(self.room_group_name, {"type": action_type, "pic": text_data_json["pic"]})
         elif action_type == "start_game":
+            await self.channel_layer.group_send(self.room_group_name, {"type": action_type})
+        elif action_type == "see_words":
             await self.channel_layer.group_send(self.room_group_name, {"type": action_type})
         elif action_type == "draw_turn":
             await self.channel_layer.group_send(self.room_group_name, {"type": action_type})
@@ -110,7 +146,17 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
                                               "pic": pic}))
     
     async def start_game(self, event):
+        add_words()
         await self.send(text_data=json.dumps({"type": "start_game"}))
+    
+    async def see_words(self, event):
+        # await self.send(text_data=json.dumps({"type": "see_words"}))
+        words = await sync_to_async(get_words)()
+
+        word1 = random.choice(words)
+        word2 = random.choice(words)
+
+        await self.send(text_data=json.dumps({"type": "see_words", "word1": word1.word, "value1": word1.point_value, "word2": word2.word, "value2": word2.point_value}))
     
     async def draw_turn(self, event):
         drawer = self.player_rotation[0]

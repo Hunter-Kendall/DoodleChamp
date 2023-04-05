@@ -29,14 +29,21 @@ function cUndo() {
 
   if (cStep > 0) {
     cStep--;
-      console.log(cPushArray[cStep]);
-      // Drawer sending 
-      chatSocket.send(JSON.stringify({
-        'type': 'undo',
-        'pic': cPushArray[cStep]
-      }));
-    }
+    console.log(cPushArray[cStep]);
+    // Drawer sending 
+    chatSocket.send(JSON.stringify({
+      'type': 'undo',
+      'pic': cPushArray[cStep]
+    }));
   }
+}
+
+function seeWords() {
+  console.log('seeWords() called')
+  chatSocket.send(JSON.stringify({
+    'type': 'see_words'
+  }));
+}
 
 // document.querySelector('#pencil-btn').onclick = function (e) {
 //   drawTool = 0;
@@ -74,6 +81,11 @@ document.querySelector('#end-btn').onclick = function () {
   }))
 };
 
+document.querySelector('#see-words').onclick = function () {
+  seeWords();
+};
+
+
 canvas.addEventListener('mousedown', (event) => {
 
   isDrawing = true;
@@ -94,6 +106,7 @@ chatSocket.onopen = function (e){
 chatSocket.onmessage = function(e){
   let draw_tool_row = document.getElementById('draw-tools');
   let data = JSON.parse(e.data);
+  let wordList = document.getElementById("words-list")
 
   switch(data.type) {
     case "draw_stroke":
@@ -116,31 +129,32 @@ chatSocket.onmessage = function(e){
       break;
     case "draw_turn":
       if (data.name === "{{username}}"){
-      drawTool = 0;
-      draw_tool_row.innerHTML = '<div id="draw-buttons"> Draw <button id="pencil-btn" class="btn-sm" onclick="pencil">&#9998</button> <button id="rectangle-btn" class="btn-sm" onclick="rectangle">&#11036</button><button id="line-btn" class="btn-sm" onclick="line">&#8213</button><button id="circle-btn" class="btn-sm" onclick="circle">&#x25EF</button><button id="undo-btn">undo</button><input type="Color" id="color-val" name="" class="form-control form-control-color" value="#000000"></div>';
-      document.querySelector('#pencil-btn').onclick = function (e) {
         drawTool = 0;
+        draw_tool_row.innerHTML = '<div id="draw-buttons"> Draw <button id="pencil-btn" class="btn-sm" onclick="pencil">&#9998</button> <button id="rectangle-btn" class="btn-sm" onclick="rectangle">&#11036</button><button id="line-btn" class="btn-sm" onclick="line">&#8213</button><button id="circle-btn" class="btn-sm" onclick="circle">&#x25EF</button><button id="undo-btn">undo</button><input type="Color" id="color-val" name="" class="form-control form-control-color" value="#000000"></div>';
+        document.querySelector('#pencil-btn').onclick = function (e) {
+          drawTool = 0;
+        };
+        
+        document.querySelector('#rectangle-btn').onclick = function (e) {
+          drawTool = 1;
+        };
+        
+        document.querySelector('#line-btn').onclick = function (e) {
+          drawTool = 2;
+        };
+        
+        document.querySelector('#circle-btn').onclick = function (e) {
+          drawTool = 3;
+        };
+        
+        document.querySelector('#undo-btn').onclick = function () {
+          cUndo();
+        };
+        
+        document.querySelector('#color-val').onchange = function () {
+          colorCode = document.querySelector('#color-val').value;
+        };
       };
-      
-      document.querySelector('#rectangle-btn').onclick = function (e) {
-        drawTool = 1;
-      };
-      
-      document.querySelector('#line-btn').onclick = function (e) {
-        drawTool = 2;
-      };
-      
-      document.querySelector('#circle-btn').onclick = function (e) {
-        drawTool = 3;
-      };
-      
-      document.querySelector('#undo-btn').onclick = function () {
-        cUndo();
-      };
-      
-      document.querySelector('#color-val').onchange = function () {
-        colorCode = document.querySelector('#color-val').value;
-      };}
       break;
     case "turn_ended":
       draw_tool_row.innerHTML = "";
@@ -150,6 +164,16 @@ chatSocket.onmessage = function(e){
       break;
 
       
+    case "see_words":
+      console.log('word1: ' + data.word1)
+      console.log('value1: ' + data.value1)
+      console.log('word2: ' + data.word2)
+      console.log('value2: ' + data.value2)
+      ptag = document.createElement('p');
+      ptag.innerHTML = data.word1 + ' -> ' + data.value1 + '<br>' + data.word2 + ' -> ' + data.value2;
+      wordList.appendChild(ptag);
+      break;
+
   }
 }
 canvas.addEventListener('mousemove', (event) => {
