@@ -73,6 +73,11 @@ def add_words():
     else:
         print("passed")
         pass
+def calc_points(code, player, points):
+    lobby_code = code[-4:]
+    user = Players.objects.get(code = lobby_code, name = player)
+    user.points = user.points + points
+    user.save()
 
 
 def get_words():
@@ -84,11 +89,7 @@ def get_words():
     words = Words.objects.all()
     return list(words)
 
-def calc_points(code, player, points):
-    lobby_code = code[-4:]
-    user = Players.objects.get(code = lobby_code, name = player)
-    user.points = user.points + points
-    user.save()
+
 
 class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
     # def __init__(self):
@@ -147,7 +148,7 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
         elif action_type == "set_word":
             await sync_to_async(set_word)(code = self.room_group_name, word = text_data_json["word"], points = text_data_json["points"])
             await self.channel_layer.group_send(self.room_group_name, {"type": "show_word"})
-            self.guess_list = []
+            
             # await self.channel_layer.group_send(self.room_group_name, {"type": "round"})
         elif action_type == "guess":
             await self.channel_layer.group_send(self.room_group_name, {"type": action_type, "guess": text_data_json["guess"], "player": text_data_json["player"]})
@@ -233,6 +234,8 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
         print(current_word, new_string)
         await self.send(text_data=json.dumps({"type": "hidden_word", "word": new_string}))
 
+        self.guess_list = []
+
     async def guess(self, event):
         current_word = await sync_to_async(curr_word)(code = self.room_group_name)
         guess = event["guess"]
@@ -253,8 +256,9 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
         if len(self.guess_list) == num_players - 1:
             #compute score
             for i, user in enumerate(self.guess_list):
-                calc_points = ((num_players - i)/num_players) * points
-                await sync_to_async(calc_points)(code = self.room_group_name, player = user.name, points = calc_points)
+                calced_points = ((num_players - i)/num_players) * points
+                print(user)
+                await sync_to_async(calc_points)(code = self.room_group_name, player = user.name, points = calced_points)
             
             await self.channel_layer.group_send(self.room_group_name, {"type": "turn_ended"})
 
