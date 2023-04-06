@@ -117,6 +117,20 @@ document.querySelector('#see-words').onclick = function () {
 };
 
 let chatField = document.getElementById("chat-field");
+
+window.onload = function() {
+  document.getElementById("chat-field").focus();
+}
+
+chatField.addEventListener('keydown', function(event) {
+  if (event.key === 'Enter' && !event.shiftKey) {
+    event.preventDefault();
+    document.getElementById('')
+    let guessBtn = document.getElementById('guess-btn');
+    guessBtn.click();
+  }
+});
+
 document.querySelector('#guess-btn').onclick = function () {
   chatSocket.send(JSON.stringify({
     'type': "guess",
