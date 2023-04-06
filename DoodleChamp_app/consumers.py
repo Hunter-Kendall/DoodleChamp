@@ -44,11 +44,12 @@ def get_drawer(code):
 
     return list(Players.objects.filter(code = lobby_code, isDrawer = True))
 
-def set_word(code, word):
+def set_word(code, word, points):
     lobby_code = code[-4:]
-    word = Game.objects.get(code = lobby_code)
-    word.active_word = word
-    word.save()
+    word_ = Game.objects.get(code = lobby_code)
+    word_.active_word = word
+    word_.point_value = points
+    word_.save()
 def curr_word(code):
     lobby_code = code[-4:]
     word = Game.objects.get(code = lobby_code)
@@ -139,7 +140,10 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
             await self.channel_layer.group_send(self.room_group_name, {"type": action_type})
         elif action_type == "set_player_list":
             await self.channel_layer.group_send(self.room_group_name, {"type": action_type})
-
+        elif action_type == "set_word":
+            await sync_to_async(set_word)(code = self.room_group_name, word = text_data_json["word"], points = text_data_json["points"])
+            await self.channel_layer.group_send(self.room_group_name, {"type": "show_word"})
+            await self.channel_layer.group_send(self.room_group_name, {"type": "round"})
     # Action types
     # Receive message from room group
     
@@ -214,9 +218,15 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
         # await sync_to_async(player_rotate)(code = self.room_group_name)
         await self.send(text_data=json.dumps({"type": "turn_ended"}))
 
-    
+    async def show_word(self, event):
+        current_word = await sync_to_async(curr_word)(code = self.room_group_name)
+        
+        new_string = " ".join("_" * len(c) for c in current_word.split())
+        await self.send(text_data=json.dumps({"type": "hidden_word", "word": new_string}))
+
     async def round(self, event):
         pass
+        
     # async def game(self, event):
     #     #first player in self.player_rotation should be selected and given permission to draw
     #     drawer = self.player_rotation[0]

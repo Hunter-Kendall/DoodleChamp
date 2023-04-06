@@ -80,6 +80,28 @@ document.querySelector('#end-btn').onclick = function () {
   }))
 };
 
+document.querySelector("#word-btn1").onclick = function (){
+  let selected_word = this.innerHTML;
+  chatSocket.send(JSON.stringify({
+    'type': "set_word",
+    'word': selected_word,
+    'points': 50
+  }))
+  // console.log("1")
+};
+//gabriel: this is how the word button should be selected
+document.querySelector("#word-btn2").onclick = function (){
+  let selected_word = this.innerHTML;
+  chatSocket.send(JSON.stringify({
+    'type': "set_word",
+    'word': selected_word,
+    'points': 100
+  }))
+  // console.log("2")
+  
+};
+//gabriel: this is how the word button should be selected
+
 document.querySelector('#see-words').onclick = function () {
   seeWords();
 };
@@ -103,6 +125,7 @@ chatSocket.onmessage = function(e){
   let data = JSON.parse(e.data);
   let wordList = document.getElementById("words-list");
   let playerList = document.getElementById("player-list");
+  let hidden_word = document.getElementById("hidden-word");
 
   switch(data.type) {
     case "add_players":
@@ -200,6 +223,9 @@ chatSocket.onmessage = function(e){
       ptag = document.createElement('p');
       ptag.innerHTML = data.word1 + ' -> ' + data.value1 + '<br>' + data.word2 + ' -> ' + data.value2;
       wordList.appendChild(ptag);
+      break;
+    case "hidden_word":
+      hidden_word.innerHTML = data.word
       break;
 
   }
