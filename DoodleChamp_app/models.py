@@ -27,7 +27,8 @@ class Game(models.Model):
     code = models.ForeignKey(Lobby, default=1, on_delete=models.CASCADE)
     round = models.IntegerField(default= 2) #will count backwards
     timer = models.IntegerField(default= 90) #in seconds
-    active_word = models.TextField()
+    active_word = models.TextField(default = "")
+    point_value = models.IntegerField(default = 0)
 
 
 
