@@ -17,7 +17,7 @@
 
   <div class="container text-center">
     <div class="row">
-      <div id="hidden-word" class="col border">word</div>
+      <div id="hidden-word" class="col border">Word: </div>
     </div>
     <div class="row">
       <div class="col border">
@@ -31,6 +31,7 @@
       </div>
       <div id="chat" class="col border">
         chat
+        <div id="chat-div"></div>
         <input id="chat-field" type="text">
         <button id="guess-btn">guess</button>
       </div>
@@ -58,8 +59,8 @@
     </button>
     <button id="test-btn">test</button>
     <button id="end-btn">end</button>
-    <button id="word-btn1">word1</button>
-    <button id="word-btn2">word2</button>
+    <button id="word-btn1">wordl</button>
+    <button id="word-btn2">wordww</button>
 
     <!-- Modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -97,9 +98,9 @@
         // Loop through all p elements and remove them from the div
         while (pElements.length > 0) {
           playerList.removeChild(pElements[0]);
-          console.log("removed");
+          //console.log("removed");
         }
-        console.log("connect");
+        //console.log("connect");
         chatSocket.send(JSON.stringify({
           'type' : "DoodleChamp_app_player_joins",
           'player': "{{username}}"

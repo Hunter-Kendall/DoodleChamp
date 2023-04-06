@@ -53,7 +53,7 @@ def set_word(code, word, points):
 def curr_word(code):
     lobby_code = code[-4:]
     word = Game.objects.get(code = lobby_code)
-    return word.active_word
+    return word
 def add_words():
     words_count = Words.objects.all()
     # print(words_count.count())
@@ -143,7 +143,10 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
         elif action_type == "set_word":
             await sync_to_async(set_word)(code = self.room_group_name, word = text_data_json["word"], points = text_data_json["points"])
             await self.channel_layer.group_send(self.room_group_name, {"type": "show_word"})
-            await self.channel_layer.group_send(self.room_group_name, {"type": "round"})
+            self.guess_list = []
+            # await self.channel_layer.group_send(self.room_group_name, {"type": "round"})
+        elif action_type == "guess":
+            await self.channel_layer.group_send(self.room_group_name, {"type": action_type, "guess": text_data_json["guess"], "player": text_data_json["player"]})
     # Action types
     # Receive message from room group
     
@@ -221,11 +224,32 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
     async def show_word(self, event):
         current_word = await sync_to_async(curr_word)(code = self.room_group_name)
         
-        new_string = " ".join("_" * len(c) for c in current_word.split())
+        new_string = " ".join("_" * len(c) for c in current_word.active_word)
+        print(current_word, new_string)
         await self.send(text_data=json.dumps({"type": "hidden_word", "word": new_string}))
 
+    async def guess(self, event):
+        current_word = await sync_to_async(curr_word)(code = self.room_group_name)
+        guess = event["guess"]
+        player = event["player"]
+        if guess == current_word:
+            await self.send(text_data=json.dumps({"type": "guess_return", "msg": f"{player} has guessed the word"}))
+            await self.channel_layer.group_send(self.room_group_name, {"type": "round", "player": player})
+        else:
+            await self.send(text_data=json.dumps({"type": "guess_return", "msg": f"{player}: {guess}"}))
+
+
     async def round(self, event):
-        pass
+        num_players = await sync_to_async(curr_word)(code = self.room_group_name)
+        num_players = len(num_players)
+        self.guess_list.append(event["player"])
+        if len(self.guess_list) == num_players - 1:
+            #compute score
+            #end turn
+            pass
+        
+
+        
         
     # async def game(self, event):
     #     #first player in self.player_rotation should be selected and given permission to draw
