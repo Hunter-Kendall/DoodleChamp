@@ -115,12 +115,17 @@ document.querySelector("#word-btn2").onclick = function (){
 document.querySelector('#see-words').onclick = function () {
   seeWords();
 };
+
+let chatField = document.getElementById("chat-field");
 document.querySelector('#guess-btn').onclick = function () {
   chatSocket.send(JSON.stringify({
     'type': "guess",
-    'guess': document.getElementById("#chat-field").value,
+    'guess': document.getElementById("chat-field").value,
     'player': username
   }))
+  // console.log(chatField.value)
+  chatField.value = "";
+
 };
 
 
@@ -143,6 +148,7 @@ chatSocket.onmessage = function(e){
   let wordList = document.getElementById("words-list");
   let playerList = document.getElementById("player-list");
   let hidden_word = document.getElementById("hidden-word");
+  let chatDiv = document.getElementById('chat-div');
   
 
   switch(data.type) {
@@ -254,9 +260,17 @@ chatSocket.onmessage = function(e){
       word2 = data.word2
       value2 = data.value2
       break;
+
     case "hidden_word":
       //console.log(data.word);
       hidden_word.innerText = "Word: " + data.word;
+      break;
+
+    case "guess_return":
+      pGuess = document.createElement('p');
+      pGuess.innerHTML = data.msg
+      chatDiv.appendChild(pGuess);
+      console.log('case guess_return')
       break;
     
   }
