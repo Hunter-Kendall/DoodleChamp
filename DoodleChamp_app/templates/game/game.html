@@ -53,13 +53,12 @@
     <br>
 
     <!-- Button trigger modal -->
-    <button id="see-words" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+    <button id="see-words" hidden type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
       See Words
     </button>
     <button id="test-btn">test</button>
     <button id="end-btn">end</button>
-    <button id="word-btn1">word1</button>
-    <button id="word-btn2">word2</button>
+
 
     <!-- Modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -70,7 +69,8 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div id="words-list" class="modal-body">
-            Words
+            <button id="word-btn1" class="btn btn-secondary" data-bs-dismiss="modal">word1</button>
+            <button id="word-btn2" class="btn btn-secondary" data-bs-dismiss="modal">word2</button>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

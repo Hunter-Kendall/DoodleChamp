@@ -11,6 +11,10 @@ let rectX = 0;
 let rectY = 0;
 let background = null;
 var cPic_rect = new Image();
+let word1 = '';
+let value1 = 0;
+let word2 = '';
+let value2 = 0;
 
 
 function cPush() {
@@ -68,6 +72,8 @@ function seeWords() {
 //   colorCode = document.querySelector('#color-val').value;
 // };
 document.querySelector('#test-btn').onclick = function () {
+  let modalBtn = document.getElementById('see-words');
+  modalBtn.click();
   chatSocket.send(JSON.stringify({
     'type': "draw_turn"
   }))
@@ -81,21 +87,25 @@ document.querySelector('#end-btn').onclick = function () {
 };
 
 document.querySelector("#word-btn1").onclick = function (){
-  let selected_word = this.innerHTML;
+  // let selected_word = this.innerHTML;
+  let selected_word = word1
+  console.log('Selected_word: ' + selected_word)
   chatSocket.send(JSON.stringify({
     'type': "set_word",
     'word': selected_word,
-    'points': 50
+    'points': value1
   }))
   // console.log("1")
 };
 //gabriel: this is how the word button should be selected
 document.querySelector("#word-btn2").onclick = function (){
-  let selected_word = this.innerHTML;
+  // let selected_word = this.innerHTML;
+  let selected_word = word2
+  console.log('Selected_word: ' + selected_word)
   chatSocket.send(JSON.stringify({
     'type': "set_word",
     'word': selected_word,
-    'points': 100
+    'points': value2
   }))
   // console.log("2")
   
@@ -126,6 +136,7 @@ chatSocket.onmessage = function(e){
   let wordList = document.getElementById("words-list");
   let playerList = document.getElementById("player-list");
   let hidden_word = document.getElementById("hidden-word");
+  
 
   switch(data.type) {
     case "add_players":
@@ -180,6 +191,7 @@ chatSocket.onmessage = function(e){
       break;
     case "draw_turn":
       if (data.player === username){
+
         drawTool = 0;
         draw_tool_row.innerHTML = '<div id="draw-buttons"> Draw <button id="pencil-btn" class="btn-sm" onclick="pencil">&#9998</button> <button id="rectangle-btn" class="btn-sm" onclick="rectangle">&#11036</button><button id="line-btn" class="btn-sm" onclick="line">&#8213</button><button id="circle-btn" class="btn-sm" onclick="circle">&#x25EF</button><button id="undo-btn">undo</button><input type="Color" id="color-val" name="" class="form-control form-control-color" value="#000000"></div>';
         document.querySelector('#pencil-btn').onclick = function (e) {
@@ -216,6 +228,13 @@ chatSocket.onmessage = function(e){
 
       
     case "see_words":
+      let pWords = wordList.getElementsByTagName('p');
+
+      // Loop through all p elements and remove them from the div
+      while (pWords.length > 0) {
+        wordList.removeChild(pWords[0]);
+        console.log("removed words");
+      }
       console.log('word1: ' + data.word1)
       console.log('value1: ' + data.value1)
       console.log('word2: ' + data.word2)
@@ -223,6 +242,10 @@ chatSocket.onmessage = function(e){
       ptag = document.createElement('p');
       ptag.innerHTML = data.word1 + ' -> ' + data.value1 + '<br>' + data.word2 + ' -> ' + data.value2;
       wordList.appendChild(ptag);
+      word1 = data.word1
+      value1 = data.value1
+      word2 = data.word2
+      value2 = data.value2
       break;
     case "hidden_word":
       hidden_word.innerHTML = data.word

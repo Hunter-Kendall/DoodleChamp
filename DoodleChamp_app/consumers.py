@@ -197,7 +197,7 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
     async def see_words(self, event):
         # await self.send(text_data=json.dumps({"type": "see_words"}))
         words = await sync_to_async(get_words)()
-        print(words, "words")
+        # print(words, "words")
 
         word1 = random.choice(words)
         word2 = random.choice(words)
@@ -219,7 +219,7 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
     async def show_word(self, event):
         current_word = await sync_to_async(curr_word)(code = self.room_group_name)
         
-        new_string = " ".join("_" * len(c) for c in current_word.split())
+        new_string = " ".join("_ " * len(c) for c in current_word.split())
         await self.send(text_data=json.dumps({"type": "hidden_word", "word": new_string}))
 
     async def round(self, event):
