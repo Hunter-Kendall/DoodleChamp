@@ -84,6 +84,12 @@ def get_words():
     words = Words.objects.all()
     return list(words)
 
+def calc_points(code, player, points):
+    lobby_code = code[-4:]
+    user = Players.objects.get(code = lobby_code, name = player)
+    user.points = user.points + points
+    user.save()
+
 class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
     # def __init__(self):
     #     self.username = ""
@@ -218,6 +224,7 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
     async def turn_ended(self, event):
         # await sync_to_async(player_rotate)(code = self.room_group_name)
         await self.send(text_data=json.dumps({"type": "turn_ended"}))
+        await self.channel_layer.group_send(self.room_group_name, {"type": "draw_turn"})
 
     async def show_word(self, event):
         current_word = await sync_to_async(curr_word)(code = self.room_group_name)
@@ -238,13 +245,19 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
 
 
     async def round(self, event):
-        num_players = await sync_to_async(curr_word)(code = self.room_group_name)
+        num_players = await sync_to_async(get_players)(code = self.room_group_name)
+        current_word = await sync_to_async(curr_word)(code = self.room_group_name)
+        points = current_word.point_value
         num_players = len(num_players)
         self.guess_list.append(event["player"])
         if len(self.guess_list) == num_players - 1:
             #compute score
-            #end turn
-            pass
+            for i, user in enumerate(self.guess_list):
+                calc_points = ((num_players - i)/num_players) * points
+                await sync_to_async(calc_points)(code = self.room_group_name, player = user.name, points = calc_points)
+            
+            await self.channel_layer.group_send(self.room_group_name, {"type": "turn_ended"})
+
         
 
         

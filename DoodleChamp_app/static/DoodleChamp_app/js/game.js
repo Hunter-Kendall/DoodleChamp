@@ -118,7 +118,7 @@ document.querySelector('#see-words').onclick = function () {
 document.querySelector('#guess-btn').onclick = function () {
   chatSocket.send(JSON.stringify({
     'type': "guess",
-    'guess': document.getElementById("#chat-field").value,
+    'guess': document.getElementById("chat-field").value,
     'player': username
   }))
 };
