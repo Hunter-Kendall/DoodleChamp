@@ -22,4 +22,15 @@ class Players(models.Model):
     code = models.ForeignKey(Lobby, default=1, on_delete=models.CASCADE)
     name = models.TextField()
     isDrawer = models.BooleanField(default=False)
+    score = models.IntegerField(default=0)
+class Game(models.Model):
+    code = models.ForeignKey(Lobby, default=1, on_delete=models.CASCADE)
+    round = models.IntegerField(default= 2) #will count backwards
+    timer = models.IntegerField(default= 90) #in seconds
+    active_word = models.TextField()
+
+
+
+
+
     

@@ -24,7 +24,7 @@ def create_lobby(request):
     username = request.POST["name"]
     Lobby.objects.create(code = code, host = username)
     lobby_code = Lobby.objects.get(code = code)
-    Players.objects.create(code = lobby_code, name = username)
+    Players.objects.create(code = lobby_code, name = username, isDrawer = True)
 
     # Pass in the room name (or room_id) and the user_name to be rendered on the page.
     return render(request, "game/lobby_host.html", {"room_name": code, "username": username})#this is where we set room id

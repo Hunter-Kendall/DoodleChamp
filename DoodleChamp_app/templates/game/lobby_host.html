@@ -88,7 +88,7 @@
             
           };
           chatSocket.onopen = function (e) {
-            let playerList = document.getElementById("player-list")          
+            let playerList = document.getElementById("player-list");         
             let pElements = playerList.getElementsByTagName('p');
 
             // Loop through all p elements and remove them from the div
@@ -96,6 +96,7 @@
               playerList.removeChild(pElements[0]);
               console.log("removed");
             }
+            console.log("connect");
             chatSocket.send(JSON.stringify({
               'type' : "DoodleChamp_app_player_joins",
               'player': "{{username}}"

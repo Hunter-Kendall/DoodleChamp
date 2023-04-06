@@ -1,6 +1,5 @@
 const canvas = document.getElementById("draw-area");
 const ctx = canvas.getContext("2d");
-const username = "{{username}}";
 let cPushArray = new Array();
 let cStep = -1;
 let isDrawing = false;
@@ -95,20 +94,32 @@ canvas.addEventListener('mousedown', (event) => {
 
 
 });
-chatSocket.onopen = function (e){
-  chatSocket.send(JSON.stringify({
-    'type': "get_player_list"
-  }))
 
-}
+
 
 // Client getting the messages
 chatSocket.onmessage = function(e){
   let draw_tool_row = document.getElementById('draw-tools');
   let data = JSON.parse(e.data);
-  let wordList = document.getElementById("words-list")
+  let wordList = document.getElementById("words-list");
+  let playerList = document.getElementById("player-list");
 
   switch(data.type) {
+    case "add_players":
+      ptag = document.createElement('p');
+      ptag.innerHTML = data.player;
+      playerList.appendChild(ptag);
+      break;
+    case "delete_players":
+        //let playerList = document.getElementById("player-list");        
+        let pElements = playerList.getElementsByTagName('p');
+
+        // Loop through all p elements and remove them from the div
+        while (pElements.length > 0) {
+          playerList.removeChild(pElements[0]);
+          console.log("removed");
+        }
+      break;
     case "draw_stroke":
       ctx.strokeStyle = data.strokeStyle;
       ctx.beginPath();
@@ -127,31 +138,50 @@ chatSocket.onmessage = function(e){
       cPic.src = data.pic;
       console.log('case undo2');
       break;
-        case "draw_turn":
-      drawTool = 0;
-      draw_tool_row.innerHTML = '<div id="draw-buttons"> Draw <button id="pencil-btn" class="btn-sm" onclick="pencil">&#9998</button> <button id="rectangle-btn" class="btn-sm" onclick="rectangle">&#11036</button><button id="line-btn" class="btn-sm" onclick="line">&#8213</button><button id="circle-btn" class="btn-sm" onclick="circle">&#x25EF</button><button id="undo-btn">undo</button><input type="Color" id="color-val" name="" class="form-control form-control-color" value="#000000"></div>';
-      document.querySelector('#pencil-btn').onclick = function (e) {
+    case "show_drawer":
+      
+        let curr_drawer = document.getElementsByClassName("isDrawer");
+        if (curr_drawer.length > 0){
+          curr_drawer[0].classList.remove("isDrawer");
+        }
+
+        var pElems = document.getElementsByTagName("p");
+        for (var i = 0; i < pElems.length; i++) {
+          console.log(pElems[i].innerHTML);
+          if (pElems[i].innerHTML === data.player) {
+            console.log(data.player);
+            pElems[i].classList.add("isDrawer");
+          }
+        }
+        
+      break;
+    case "draw_turn":
+      if (data.player === username){
         drawTool = 0;
-      };
-      
-      document.querySelector('#rectangle-btn').onclick = function (e) {
-        drawTool = 1;
-      };
-      
-      document.querySelector('#line-btn').onclick = function (e) {
-        drawTool = 2;
-      };
-      
-      document.querySelector('#circle-btn').onclick = function (e) {
-        drawTool = 3;
-      };
-      
-      document.querySelector('#undo-btn').onclick = function () {
-        cUndo();
-      };
-      
-      document.querySelector('#color-val').onchange = function () {
-        colorCode = document.querySelector('#color-val').value;
+        draw_tool_row.innerHTML = '<div id="draw-buttons"> Draw <button id="pencil-btn" class="btn-sm" onclick="pencil">&#9998</button> <button id="rectangle-btn" class="btn-sm" onclick="rectangle">&#11036</button><button id="line-btn" class="btn-sm" onclick="line">&#8213</button><button id="circle-btn" class="btn-sm" onclick="circle">&#x25EF</button><button id="undo-btn">undo</button><input type="Color" id="color-val" name="" class="form-control form-control-color" value="#000000"></div>';
+        document.querySelector('#pencil-btn').onclick = function (e) {
+          drawTool = 0;
+        };
+        
+        document.querySelector('#rectangle-btn').onclick = function (e) {
+          drawTool = 1;
+        };
+        
+        document.querySelector('#line-btn').onclick = function (e) {
+          drawTool = 2;
+        };
+        
+        document.querySelector('#circle-btn').onclick = function (e) {
+          drawTool = 3;
+        };
+        
+        document.querySelector('#undo-btn').onclick = function () {
+          cUndo();
+        };
+        
+        document.querySelector('#color-val').onchange = function () {
+          colorCode = document.querySelector('#color-val').value;
+        };
       };
       break;
     case "turn_ended":
