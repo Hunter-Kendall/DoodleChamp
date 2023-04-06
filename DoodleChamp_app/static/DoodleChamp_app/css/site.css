@@ -1,3 +1,11 @@
 .isDrawer{
     border: 2px solid red;
 }
+#chat-div{
+    margin-top: 9px; 
+    width: 100%; 
+    height: 100px; 
+    overflow-y: scroll;
+    border: 1px solid rgb(0, 0, 0);
+
+}

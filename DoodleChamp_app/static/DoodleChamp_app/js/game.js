@@ -23,7 +23,7 @@ function cPush() {
   cPushArray.push(canvas.toDataURL());
 
 
-  console.log('first array ' + cPushArray[cStep])
+  ////console.log('first array ' + cPushArray[cStep])
 
 }
 cPush();
@@ -32,7 +32,7 @@ function cUndo() {
 
   if (cStep > 0) {
     cStep--;
-    console.log(cPushArray[cStep]);
+    ////console.log(cPushArray[cStep]);
     // Drawer sending 
     chatSocket.send(JSON.stringify({
       'type': 'undo',
@@ -42,7 +42,7 @@ function cUndo() {
 }
 
 function seeWords() {
-  console.log('seeWords() called')
+  ////console.log('seeWords() called')
   chatSocket.send(JSON.stringify({
     'type': 'see_words'
   }));
@@ -80,7 +80,7 @@ document.querySelector('#test-btn').onclick = function () {
 };
 
 document.querySelector('#end-btn').onclick = function () {
-  console.log("test");
+  //console.log("test");
   chatSocket.send(JSON.stringify({
     'type': "turn_ended"
   }))
@@ -114,6 +114,13 @@ document.querySelector("#word-btn2").onclick = function (){
 
 document.querySelector('#see-words').onclick = function () {
   seeWords();
+};
+document.querySelector('#guess-btn').onclick = function () {
+  chatSocket.send(JSON.stringify({
+    'type': "guess",
+    'guess': document.getElementById("#chat-field").value,
+    'player': username
+  }))
 };
 
 
@@ -151,7 +158,7 @@ chatSocket.onmessage = function(e){
         // Loop through all p elements and remove them from the div
         while (pElements.length > 0) {
           playerList.removeChild(pElements[0]);
-          console.log("removed");
+          //console.log("removed");
         }
       break;
     case "draw_stroke":
@@ -163,14 +170,14 @@ chatSocket.onmessage = function(e){
       break;
     
     case "undo":
-      console.log('data pic: ' + data.pic);
+      //console.log('data pic: ' + data.pic);
       var cPic = new Image();
       cPic.onload = function () {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(cPic, 0, 0);
       }
       cPic.src = data.pic;
-      console.log('case undo2');
+      //console.log('case undo2');
       break;
     case "show_drawer":
       
@@ -181,9 +188,9 @@ chatSocket.onmessage = function(e){
 
         var pElems = document.getElementsByTagName("p");
         for (var i = 0; i < pElems.length; i++) {
-          console.log(pElems[i].innerHTML);
+          //console.log(pElems[i].innerHTML);
           if (pElems[i].innerHTML === data.player) {
-            console.log(data.player);
+            //console.log(data.player);
             pElems[i].classList.add("isDrawer");
           }
         }
@@ -223,7 +230,7 @@ chatSocket.onmessage = function(e){
       draw_tool_row.innerHTML = "";
 
       drawTool = -1; // means no tool selected
-      console.log("w");
+      //console.log("w");
       break;
 
       
@@ -235,10 +242,10 @@ chatSocket.onmessage = function(e){
         wordList.removeChild(pWords[0]);
         console.log("removed words");
       }
-      console.log('word1: ' + data.word1)
-      console.log('value1: ' + data.value1)
-      console.log('word2: ' + data.word2)
-      console.log('value2: ' + data.value2)
+      // console.log('word1: ' + data.word1)
+      // console.log('value1: ' + data.value1)
+      // console.log('word2: ' + data.word2)
+      // console.log('value2: ' + data.value2)
       ptag = document.createElement('p');
       ptag.innerHTML = data.word1 + ' -> ' + data.value1 + '<br>' + data.word2 + ' -> ' + data.value2;
       wordList.appendChild(ptag);
@@ -248,9 +255,10 @@ chatSocket.onmessage = function(e){
       value2 = data.value2
       break;
     case "hidden_word":
-      hidden_word.innerHTML = data.word
+      //console.log(data.word);
+      hidden_word.innerText = "Word: " + data.word;
       break;
-
+    
   }
 }
 canvas.addEventListener('mousemove', (event) => {
