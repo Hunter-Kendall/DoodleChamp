@@ -30,16 +30,16 @@
         <canvas id="draw-area" class="border"></canvas>
       </div>
       <div id="chat" class="col border">
-        chat 
+        chat
         <div id="chat-div"></div>
         <input id="chat-field" type="text" autofocus>
         <button id="guess-btn" type="submit">guess</button>
       </div>
     </div>
     <div class="row">
-        <div id="draw-tools" class="col border"></div>
-        
-        <!-- <br>
+      <div id="draw-tools" class="col border"></div>
+
+      <!-- <br>
         
           Draw
           <button id="pencil-btn" class="btn-sm" onclick="pencil">&#9998</button>
@@ -48,64 +48,65 @@
           <button id="circle-btn" class="btn-sm" onclick="circle">&#x25EF</button>
           <button id="undo-btn">undo</button>
           <input type="Color" id="color-val" name="" class="form-control form-control-color" value="#000000"> -->
-        
+
     </div>
   </div>
-    <br>
+  <br>
 
-    <!-- Button trigger modal -->
-    <button id="see-words" hidden type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-      See Words
-    </button>
-    <button id="test-btn">test</button>
-    <button id="end-btn">end</button>
+  <!-- Button trigger modal -->
+  <button id="see-words" hidden type="button" class="btn btn-primary" data-bs-toggle="modal"
+    data-bs-target="#exampleModal">
+    See Words
+  </button>
+  <button id="test-btn">test</button>
+  <button id="end-btn">end</button>
 
-    <!-- Modal -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5" id="exampleModalLabel">Words</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div id="words-list" class="modal-body">
-            <button id="word-btn1" class="btn btn-secondary" data-bs-dismiss="modal">word1</button>
-            <button id="word-btn2" class="btn btn-secondary" data-bs-dismiss="modal">word2</button>
-          </div>
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Words</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div id="words-list" class="modal-body">
+          <button id="word-btn1" class="btn btn-secondary" data-bs-dismiss="modal">word1</button>
+          <button id="word-btn2" class="btn btn-secondary" data-bs-dismiss="modal">word2</button>
         </div>
       </div>
     </div>
+  </div>
 
-    <script>
-      const username = "{{username}}";
-      const chatSocket = new WebSocket(
-        'ws://'
-        + window.location.host
-        + '/ws/DoodleChamp/'
-        + '{{game_room_name}}'
-        + '/'
-      );
-      
+  <script>
+    const username = "{{username}}";
+    const chatSocket = new WebSocket(
+      'ws://'
+      + window.location.host
+      + '/ws/DoodleChamp/'
+      + '{{game_room_name}}'
+      + '/'
+    );
 
-      chatSocket.onopen = function (e) {
-        let playerList = document.getElementById("player-list");
-        let pElements = playerList.getElementsByTagName('p');
-        // Loop through all p elements and remove them from the div
-        while (pElements.length > 0) {
-          playerList.removeChild(pElements[0]);
-          //console.log("removed");
-        }
-        //console.log("connect");
-        chatSocket.send(JSON.stringify({
-          'type' : "DoodleChamp_app_player_joins",
-          'player': "{{username}}"
-        }))
-      };
-      chatSocket.onclose = function (e) {
-              console.error('Chat socket closed unexpectedly');
-            };
-    </script>
-    <script type="text/javascript" src="../../static/DoodleChamp_app/js/game.js"></script>
+
+    chatSocket.onopen = function (e) {
+      let playerList = document.getElementById("player-list");
+      let pElements = playerList.getElementsByTagName('p');
+      // Loop through all p elements and remove them from the div
+      while (pElements.length > 0) {
+        playerList.removeChild(pElements[0]);
+        //console.log("removed");
+      }
+      //console.log("connect");
+      chatSocket.send(JSON.stringify({
+        'type': "DoodleChamp_app_player_joins",
+        'player': "{{username}}"
+      }))
+    };
+    chatSocket.onclose = function (e) {
+      console.error('Chat socket closed unexpectedly');
+    };
+  </script>
+  <script type="text/javascript" src="../../static/DoodleChamp_app/js/game.js"></script>
 </body>
 
 </html>

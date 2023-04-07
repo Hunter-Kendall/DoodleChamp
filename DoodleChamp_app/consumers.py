@@ -208,8 +208,11 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({"type": "see_words", "word1": word1.word, "value1": word1.point_value, "word2": word2.word, "value2": word2.point_value}))
 
     async def draw_turn(self, event):
+        # Note: Update scores here with a function
         drawer = await sync_to_async(get_drawer)(code = self.room_group_name)
         #print("drawer", drawer)
+        #delete players
+        #show scores
         await self.send(text_data=json.dumps({"type": "show_drawer", "player": drawer[0].name}))
         await self.send(text_data=json.dumps({"type": "draw_turn", "player": drawer[0].name}))
         

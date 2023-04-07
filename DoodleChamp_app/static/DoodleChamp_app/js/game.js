@@ -166,7 +166,7 @@ chatSocket.onmessage = function(e){
   
 
   switch(data.type) {
-    case "add_players":
+    case "add_players": // Note: COMMENT IT OUT
       ptag = document.createElement('p');
       ptag.innerHTML = data.player;
       playerList.appendChild(ptag);

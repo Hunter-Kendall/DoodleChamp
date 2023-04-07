@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+<div class="p-3 mb-2 bg-dark text-light vh-100">
 <header>
   <meta charset="utf-8" />
   <title>DoodleChamp lobby</title>
@@ -11,16 +12,43 @@
   <h2>Join code: {{ room_name }}</h2>
 
   {{ room_name|json_script:"room-name" }}
-  <div class="container text-center">
-    <div class="row">
-      <div id="player-list" class="col border">
+  <div class="container text-center col-2">
+    <!-- <div class="row"> -->
+      <!-- <div id="player-list" class="col border text-light table table-bordered table-secondary table-striped table-hover align-middle">
         Player List
       </div>
       <div class="col border">
         Settings
+      </div> -->
+      <div id="player-list" class="col border rounded text-light table table-bordered table-secondary table-striped table-hover align-middle">
+        <table  class="table rounded table-dark table-bordered table-striped table-hover align-middle">
+          <thead class="table-info text-center">
+            <tr>
+              <th class="text-center">Player List</th>
+            </tr>
+          </thead>
+        </table>
       </div>
-    </div>
+      <!-- <div id="player-list" class="col border text-light table table-bordered table-secondary table-striped table-hover align-middle">
+        Player List
+      </div> -->
+  
+      <!-- <div class="col border rounded">
+        Settings
+      </div> -->
+    <!-- </div> -->
   </div><br>
+  <div class="container text-center col-2">
+    <div class="col border rounded text-light table table-bordered table-secondary table-striped table-hover align-middle">
+      <table class="table rounded table-dark table-bordered table-striped table-hover align-middle">
+        <thead class="table-info text-center">
+          <tr>
+            <th class="text-center">Settings</th>
+          </tr>
+        </thead>
+      </table>
+    </div>
+  </div>
   <br><br>
   
   <form id="jsform" action="Game" method = "POST">
@@ -102,5 +130,5 @@
           };
   </script>
 </body>
-
+</div>
 </html>

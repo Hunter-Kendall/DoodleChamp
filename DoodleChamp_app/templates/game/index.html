@@ -1,53 +1,116 @@
 <!DOCTYPE html>
 <html>
+<header>
+    <meta charset="utf-8" />
+    <title>DoodleChamp Home</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <div class="mt-0 p-5 bg-primary bg-gradient text-dark rounded text-center">
+        <h1><b><big>DoodleChamp</big></b></h1>
+    </div>
+</header>
+<div class="p-3 mb-2 bg-dark text-light vh-100">
+<div class="row">
+    <div class="col-6 justify-content-center">
+        <div class="card text-center">
+            <div class="card-header hr bg-info">
+                <h3>Create a Lobby</h3>
+            </div>
+            <div class="card-body bg-dark justify-content-center">
+                <form action="Host" method="POST">
+                    <label for="name">User</label><br>
+                    <textarea id="username" name="name" type="text" placeholder="Type your Username" rows="1" cols="25"></textarea>
+                    <br>
+                    <button id="lobby-btn" class="btn btn-info">Create Lobby</button>
+                    {% csrf_token %}
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-6 justify-content-center">
+        <div class="card text-center">
+            <div class="card-header hr bg-dark bg-gradient">
+                <h3>Join a Lobby</h3>
+            </div>
+            <div class="card-body bg-dark justify-content-center">
+                <form action="Lobby" method="POST">
+                    <label for="name">User</label><br>
+                    <textarea type="text" name="name" placeholder="Type your Username" rows="1" cols="25"></textarea><br>
+                    <label for="code">Lobby Code</label><br>
+                    <textarea id="lobby-code" type="text" name="code" placeholder="Enter Lobby Code" rows="1" cols="25"></textarea>
+                    <br>
+                    <button id="join-btn" class="btn btn-info">Join Lobby</button>
+                    {% csrf_token %}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<div class="p-3 mb-2 bg-dark text-light vh-100">
     <header>
-        <meta charset="utf-8"/>
+        <meta charset="utf-8" />
         <title>DoodleChamp Home</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+            integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+        <div class="mt-4 p-5 bg-info bg-gradient text-dark rounded text-center">
+            <h1><b><big>DoodleChamp</big></b></h1>
+        </div>
     </header>
+
     <body>
-        <h2>Welcome to DoodleChamp</h2>
-        <form action="Host" method="POST" >
-            <input id="username" name="name" type="text">
-            <button id="lobby-btn">Create Lobby</button>
-            {% csrf_token %}
-        </form>
-        <br>
-        <p>Join a Lobby</p>
-        <form action="Lobby" method = "POST">
-            <input type="text" name="name">
-            <input id="lobby-code" type="text" name="code">
-            
-        <button id="join-btn">Join Lobby</button><br><br>
-        {% csrf_token %}
-        </form>
-        
+        <div class="col border text-center justify-content-center col-7">
+            <div class="mt-4 p-5 bg-dark  text-white rounded text-center row justify-content-center col-7">
+                <h3>Welcome to DoodleChamp</h3><br><br><br>
+                <h6><small>Create a Lobby</small></h6>
+                <form action="Host" method="POST"
+                    class="mb-3 mt-3 p-3 mb-2 bg-dark bg-gradient text-white rounded col-5 row justify-content-center">
+                    <label for="name">User</label>
+                    <textarea id="username" name="name" type="text" placeholder="Type your Username" rows="1"
+                        cols="2"></textarea>
+                    <br>
+                    <button id="lobby-btn" class="btn btn-info">Create Lobby</button>
+                    {% csrf_token %}
+                </form>
+                <br>
+                <h6><small>Join a Lobby</small></h6>
+                <form action="Lobby" method="POST"
+                    class="mb-3 mt-3 p-3 mb-2 bg-dark bg-gradient text-white rounded col-5 row justify-content-center">
+                    <label for="name">User</label>
+                    <textarea type="text" name="name" placeholder="Type your Username" rows="1" cols="5"></textarea>
+                    <label for="code">Lobby Code</label>
+                    <textarea id="lobby-code" type="text" name="code" placeholder="Enter Lobby Code" rows="1"
+                        cols="5"></textarea>
+                    <br>
+                    <button id="join-btn" class="btn btn-info">Join Lobby</button><br><br>
+                    {% csrf_token %}
+                </form>
 
-        <script>
 
-            document.querySelector('#lobby-btn').onclick = function(e){
-                // let username = document.querySelector('#username').value;
-                // window.location.pathname = '/DoodleChamp/room_id/';
-            }
+                <script>
 
-            // document.querySelector('#lobby-code').focus();
-            // document.querySelector('#lobby-code').onkeyup = function(e) {
-            //     if (e.keyCode === 13) { // enter, return
-            //         document.querySelector('#join-btn').click();
-            //     }
-            // }
+                    document.querySelector('#lobby-btn').onclick = function (e) {
+                        // let username = document.querySelector('#username').value;
+                        // window.location.pathname = '/DoodleChamp/room_id/';
+                    }
 
-            document.querySelector('#join-btn').onclick = function(e){
-                let roomName = document.querySelector('#lobby-code').value;
-                window.location.pathname = '/DoodleChamp/' + roomName + '/';
-            }
-        </script>
+                    // document.querySelector('#lobby-code').focus();
+                    // document.querySelector('#lobby-code').onkeyup = function(e) {
+                    //     if (e.keyCode === 13) { // enter, return
+                    //         document.querySelector('#join-btn').click();
+                    //     }
+                    // }
 
-        {% for lobby in lobbies reversed %}
-            <tr>
-                <small>{{ lobby.code }}</small></td>
-            </tr>
-        {% endfor %}
-
-        
+                    document.querySelector('#join-btn').onclick = function (e) {
+                        let roomName = document.querySelector('#lobby-code').value;
+                        window.location.pathname = '/DoodleChamp/' + roomName + '/';
+                    }
+                </script>
+            </div>
+        </div>
     </body>
+</div>
+
 </html>
