@@ -72,8 +72,7 @@ function seeWords() {
 //   colorCode = document.querySelector('#color-val').value;
 // };
 document.querySelector('#test-btn').onclick = function () {
-  let modalBtn = document.getElementById('see-words');
-  modalBtn.click();
+  
   chatSocket.send(JSON.stringify({
     'type': "draw_turn"
   }))
@@ -94,7 +93,10 @@ document.querySelector("#word-btn1").onclick = function (){
     'type': "set_word",
     'word': selected_word,
     'points': value1
-  }))
+  }));
+  chatSocket.send(JSON.stringify({
+    'type': "next_player"
+  }));
   // console.log("1")
 };
 //gabriel: this is how the word button should be selected
@@ -106,7 +108,10 @@ document.querySelector("#word-btn2").onclick = function (){
     'type': "set_word",
     'word': selected_word,
     'points': value2
-  }))
+  }));
+  chatSocket.send(JSON.stringify({
+    'type': "next_player"
+  }));
   // console.log("2")
   
 };
@@ -163,6 +168,7 @@ chatSocket.onmessage = function(e){
   let playerList = document.getElementById("player-list");
   let hidden_word = document.getElementById("hidden-word");
   let chatDiv = document.getElementById('chat-div');
+  let scoreboard = document.getElementById('scoreboard')
   
 
   switch(data.type) {
@@ -218,7 +224,8 @@ chatSocket.onmessage = function(e){
       break;
     case "draw_turn":
       if (data.player === username){
-
+        let modalBtn = document.getElementById('see-words');
+        modalBtn.click();
         drawTool = 0;
         draw_tool_row.innerHTML = '<div id="draw-buttons"> Draw <button id="pencil-btn" class="btn-sm" onclick="pencil">&#9998</button> <button id="rectangle-btn" class="btn-sm" onclick="rectangle">&#11036</button><button id="line-btn" class="btn-sm" onclick="line">&#8213</button><button id="circle-btn" class="btn-sm" onclick="circle">&#x25EF</button><button id="undo-btn">undo</button><input type="Color" id="color-val" name="" class="form-control form-control-color" value="#000000"></div>';
         document.querySelector('#pencil-btn').onclick = function (e) {
@@ -245,12 +252,16 @@ chatSocket.onmessage = function(e){
           colorCode = document.querySelector('#color-val').value;
         };
       };
+
       break;
     case "turn_ended":
+
       draw_tool_row.innerHTML = "";
 
       drawTool = -1; // means no tool selected
       //console.log("w");
+      // let endbtn = document.getElementById('end-btn');
+      // endbtn.click();
       break;
 
       
@@ -285,6 +296,14 @@ chatSocket.onmessage = function(e){
       pGuess.innerHTML = data.msg
       chatDiv.appendChild(pGuess);
       console.log('case guess_return')
+      break;
+    
+    case "end_game":
+      ptag = document.createElement('p');
+      ptag.innerHTML = data.player;
+      scoreboard.appendChild(ptag);
+      break;
+      
       break;
     
   }

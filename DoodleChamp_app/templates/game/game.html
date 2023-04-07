@@ -57,10 +57,13 @@
     <button id="see-words" hidden type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
       See Words
     </button>
+    <button id="final-modal" hidden type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#finalmodal">
+      See scoreboard
+    </button>
     <button id="test-btn">test</button>
     <button id="end-btn">end</button>
 
-    <!-- Modal -->
+    <!-- word Modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -75,6 +78,21 @@
         </div>
       </div>
     </div>
+
+        <!-- scoreboard Modal -->
+        <div class="modal fade" id="finalmodal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Words</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div id="scoreboard" class="modal-body">
+                
+              </div>
+            </div>
+          </div>
+        </div>
 
     <script>
       const username = "{{username}}";
@@ -99,8 +117,12 @@
         chatSocket.send(JSON.stringify({
           'type' : "DoodleChamp_app_player_joins",
           'player': "{{username}}"
-        }))
+        }));
+        chatSocket.send(JSON.stringify({
+          'type': "draw_turn"
+        }));
       };
+
       chatSocket.onclose = function (e) {
               console.error('Chat socket closed unexpectedly');
             };

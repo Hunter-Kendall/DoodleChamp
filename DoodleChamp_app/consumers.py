@@ -35,7 +35,18 @@ def player_rotate(code):
         next_player = Players.objects.get(code = lobby_code, id = first_id)
         next_player.isDrawer = True
         next_player.save()
+        game = Game.objects.get(code = lobby_code)
+        game.round = game.round - 1
+        game.save()
 
+def check_round(code):
+    lobby_code = code[-4:]
+    game = Game.objects.get(code = lobby_code)
+    return game.round
+
+def final_scoreboard(code):
+    lobby_code = code[-4:]
+    return list(Players.objects.filter(code=lobby_code).order_by('-score'))
 def get_drawer(code):
     
     lobby_code = code[-4:]
@@ -76,7 +87,7 @@ def add_words():
 def calc_points(code, player, points):
     lobby_code = code[-4:]
     user = Players.objects.get(code = lobby_code, name = player)
-    user.points = user.points + points
+    user.score = user.score + points
     user.save()
 
 
@@ -140,8 +151,15 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
             await self.channel_layer.group_send(self.room_group_name, {"type": action_type})
         elif action_type == "draw_turn":
             await self.channel_layer.group_send(self.room_group_name, {"type": action_type})
+            
+        elif action_type == "next_player":
+            print("next player")
+            await sync_to_async(player_rotate)(code = self.room_group_name)
+            round = await sync_to_async(check_round)(code = self.room_group_name)
+            if round == 0:
+                await self.channel_layer.group_send(self.room_group_name, {"type": "end_game"})
         elif action_type == "turn_ended":
-            await sync_to_async(player_rotate)(code = self.room_group_name) #is here since it only needs to be executed once
+             #is here since it only needs to be executed once
             await self.channel_layer.group_send(self.room_group_name, {"type": action_type})
         elif action_type == "set_player_list":
             await self.channel_layer.group_send(self.room_group_name, {"type": action_type})
@@ -215,8 +233,11 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({"type": "see_words", "word1": word1.word, "value1": word1.point_value, "word2": word2.word, "value2": word2.point_value}))
 
     async def draw_turn(self, event):
+        print("new_turn")
         drawer = await sync_to_async(get_drawer)(code = self.room_group_name)
         #print("drawer", drawer)
+        #delete players
+        #show scores
         await self.send(text_data=json.dumps({"type": "show_drawer", "player": drawer[0].name}))
         await self.send(text_data=json.dumps({"type": "draw_turn", "player": drawer[0].name}))
         
@@ -225,7 +246,8 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
     async def turn_ended(self, event):
         # await sync_to_async(player_rotate)(code = self.room_group_name)
         await self.send(text_data=json.dumps({"type": "turn_ended"}))
-        await self.channel_layer.group_send(self.room_group_name, {"type": "draw_turn"})
+        
+        print("turn ended")
 
     async def show_word(self, event):
         current_word = await sync_to_async(curr_word)(code = self.room_group_name)
@@ -257,10 +279,18 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
             #compute score
             for i, user in enumerate(self.guess_list):
                 calced_points = ((num_players - i)/num_players) * points
-                print(user)
-                await sync_to_async(calc_points)(code = self.room_group_name, player = user.name, points = calced_points)
-            
+                print("test:", user)
+                await sync_to_async(calc_points)(code = self.room_group_name, player = user, points = calced_points)
+            print("done calculating points")
+            self.guess_list = []
+            print(self.guess_list)
             await self.channel_layer.group_send(self.room_group_name, {"type": "turn_ended"})
+            await self.channel_layer.group_send(self.room_group_name, {"type": "draw_turn"})
+
+    async def end_game(self, event):
+        scoreboard = await sync_to_async(final_scoreboard)(code = self.room_group_name)
+        for i, user in enumerate(scoreboard):
+            await self.send(text_data=json.dumps({"type": "end_game", "prompt": f"{i + 1}: {user.name} Points: {user.score}"}))
 
         
 
