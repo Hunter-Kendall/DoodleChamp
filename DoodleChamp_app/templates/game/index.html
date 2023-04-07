@@ -1,31 +1,116 @@
 <!DOCTYPE html>
 <html>
-    <header>
-        <meta charset="utf-8"/>
-        <title>DoodleChamp Home</title>
-    </header>
-    <body>
-        <h2>Welcome to DoodleChamp</h2>
-        <button id="lobby-btn">Create Lobby</button><br>
-        <p>Join a Lobby</p>
-        <input id="lobby-code" type="text">
-        <button id="join-btn">Join Lobby</button><br><br>
-        <input id="username" type="text">
-        <button id="username-btn">Enter Username</button>
+<header>
+    <meta charset="utf-8" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                DoodleChamp &#33;&reg;
+            </a>
+        </div>
+    </nav>
+    <style>
+        body {
+            overflow: hidden;
+            height: 100%;
+        }
+    </style>
+</header>
 
-        <script>
-            document.querySelector('#lobby-code').focus();
-            document.querySelector('#lobby-code').onkeyup = function(e) {
-                if (e.keyCode === 13) { // enter, return
-                    document.querySelector('#join-btn').click();
-                }
-            }
+<body class="d-flex flex-column">
 
-            document.querySelector('#join-btn').onclick = function(e){
-                let roomName = document.querySelector('#lobby-code').value;
-                window.location.pathname = '/DoodleChamp/' + roomName + '/';
-            }
-        </script>
-        
-    </body>
+    <div class="p-3 mb-2 bg-dark text-light vh-100 d-flex align-items-center">
+        <div class="row justify-content-center text-center">
+
+            <div class="col-3 justify-content-center text-center">
+                <h5 class="display-6">Create your own lobby.</h5>
+                <p class="lead">Be responsible for greeting and welcoming your friends in
+                    a fun DoodleChamp game. Lead them to decide when the game should start
+                    and be ready for some action!
+                </p>
+                <div class="card text-center">
+                    <a class="btn btn-light fw-bold collapsed" data-bs-toggle="collapse" href="#createLobby"
+                        role="button" aria-expanded="false" aria-controls="collapseExample">
+                        Create Lobby
+                    </a>
+                    <div class="collapse" id="createLobby" style="">
+                        <div class="card card-body bg-dark">
+                            <form action="Host" method="POST">
+                                <label for="name">User</label><br>
+                                <textarea id="username" name="name" type="text" placeholder="Type your Username"
+                                    rows="1" cols="25"></textarea>
+                                <br><br>
+                                <button id="lobby-btn" class="btn btn-secondary fw-bold">Create It!</button>
+                                {% csrf_token %}
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-3 justify-content-center text-center">
+                <h5 class="display-6">Join a lobby.</h5>
+                <p class="lead">Don't feel like having the responsability of being a good host? No problem at
+                    all.
+                    Ask your friends for the lobby code and hop into their room to see and draw works of art.
+                </p>
+                <div class="card text-center">
+                    <button class="btn btn-light fw-bold collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#joinLobby" aria-expanded="false" aria-controls="collapseExample">
+                        Join Lobby
+                    </button>
+                    <div class="collapse" id="joinLobby" style="">
+                        <div class="card card-body bg-dark">
+                            <form action="Lobby" method="POST">
+                                <label for="name">User</label><br>
+                                <textarea type="text" name="name" placeholder="Type your Username" rows="1"
+                                    cols="25"></textarea><br>
+                                <label for="code">Lobby Code</label><br>
+                                <textarea id="lobby-code" type="text" name="code" placeholder="Enter Lobby Code"
+                                    rows="1" cols="25"></textarea>
+                                <br>
+                                <button id="join-btn" class="btn btn-secondary fw-bold">Join It!</button>
+                                {% csrf_token %}
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <footer class="bg-dark text-light py-3 fixed-bottom">
+        <p class="text-center m-0"><small>DoodleChamp by</small> <a href="https://github.com/Gabrielmbl" target="_blank" class="opacity-50 text-white">Gabriel</a>, <a href="https://github.com/Hunter-Kendall" target="_blank" class="opacity-50 text-white">Hunter</a> </p>
+    </footer>
+    <script>
+
+        document.querySelector('#lobby-btn').onclick = function (e) {
+            // let username = document.querySelector('#username').value;
+            // window.location.pathname = '/DoodleChamp/room_id/';
+        }
+
+        // document.querySelector('#lobby-code').focus();
+        // document.querySelector('#lobby-code').onkeyup = function(e) {
+        //     if (e.keyCode === 13) { // enter, return
+        //         document.querySelector('#join-btn').click();
+        //     }
+        // }
+
+        document.querySelector('#join-btn').onclick = function (e) {
+            let roomName = document.querySelector('#lobby-code').value;
+            window.location.pathname = '/DoodleChamp/' + roomName + '/';
+        }
+    </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
 </html>
+
