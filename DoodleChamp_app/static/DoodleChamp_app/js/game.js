@@ -223,6 +223,7 @@ chatSocket.onmessage = function(e){
         
       break;
     case "draw_turn":
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
       if (data.player === username){
         let modalBtn = document.getElementById('see-words');
         modalBtn.click();
@@ -297,13 +298,13 @@ chatSocket.onmessage = function(e){
       chatDiv.appendChild(pGuess);
       console.log('case guess_return')
       break;
+    case "end_modal":
+      document.getElementById('final-modal').click();
     
     case "end_game":
       ptag = document.createElement('p');
-      ptag.innerHTML = data.player;
+      ptag.innerHTML = data.prompt;
       scoreboard.appendChild(ptag);
-      break;
-      
       break;
     
   }
