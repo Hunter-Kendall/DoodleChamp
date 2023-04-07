@@ -195,6 +195,8 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
             # print(user.name)
             # name = user.values()["name"]
             await self.send(text_data=json.dumps({"type": "add_players", "player": user.name}))
+            # await self.send(text_data=json.dumps({"type": "add_players", "player": f"{user.name} | {user.score}"}))
+
         
         # Send player info to WebSocket
     
@@ -236,11 +238,16 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({"type": "see_words", "word1": word1.word, "value1": word1.point_value, "word2": word2.word, "value2": word2.point_value}))
 
     async def draw_turn(self, event):
+        # Note: Update scores here with a function
         print("new_turn")
         drawer = await sync_to_async(get_drawer)(code = self.room_group_name)
+        users = await sync_to_async(get_players)(code = self.room_group_name) #gets all players in the room except the user to be displayed in the player list
         #print("drawer", drawer)
         #delete players
         #show scores
+        await self.send(text_data=json.dumps({"type": "delete_players"}))
+        for user in users:
+            await self.send(text_data=json.dumps({"type": "add_players", "player": f"{user.name} | {user.score}"}))
         await self.send(text_data=json.dumps({"type": "show_drawer", "player": drawer[0].name}))
         await self.send(text_data=json.dumps({"type": "draw_turn", "player": drawer[0].name}))
         
@@ -248,7 +255,11 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
 
     async def turn_ended(self, event):
         # await sync_to_async(player_rotate)(code = self.room_group_name)
+        # users = await sync_to_async(get_players)(code = self.room_group_name) #gets all players in the room except the user to be displayed in the player list
         await self.send(text_data=json.dumps({"type": "turn_ended"}))
+        # await self.send(text_data=json.dumps({"type": "delete_players"}))
+        # for user in users:
+        #     await self.send(text_data=json.dumps({"type": "add_players", "player": f"{user.name} | {user.score}"}))
         
         print("turn ended")
 

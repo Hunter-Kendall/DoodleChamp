@@ -22,89 +22,89 @@
     </div>
   </div><br>
   <br><br>
-  
-  <form id="jsform" action="Game" method = "POST">
+
+  <form id="jsform" action="Game" method="POST">
     <input type="hidden" value="{{ room_name }}" name="game-code">
     <input type="hidden" value="{{username}}" name="username">
-    
-    
+
+
     {% csrf_token %}
   </form>
   <button id="start-btn">Start Game</button><br><br>
   <button id="test-btn">Start test</button>
   <script>
-          document.querySelector('#start-btn').onclick = function(e){
-            chatSocket.send(JSON.stringify({
-              'type' : "start_game",
-          
-            }))
+    document.querySelector('#start-btn').onclick = function (e) {
+      chatSocket.send(JSON.stringify({
+        'type': "start_game",
+
+      }))
+    }
+
+    // document.querySelector('#game-code').onkeyup = function(e) {
+    //     if (e.keyCode === 13) { // enter, return
+    //         document.querySelector('#start-btn').click();
+    //     }
+    // }
+    const roomName = JSON.parse(document.getElementById('room-name').textContent);
+    document.querySelector('#test-btn').onclick = function (e) {
+      chatSocket.send(JSON.stringify({
+        'type': "print_name",
+
+      }))
+    }
+
+    const chatSocket = new WebSocket(
+      'ws://'
+      + window.location.host
+      + '/ws/DoodleChamp/'
+      + roomName
+      + '/'
+    );
+
+    chatSocket.onmessage = function (e) {
+      let data = JSON.parse(e.data);
+      let playerList = document.getElementById("player-list");
+
+      switch (data.type) {
+        case "add_players":
+          ptag = document.createElement('p');
+          ptag.innerHTML = data.player;
+          playerList.appendChild(ptag);
+          break;
+        case "delete_players":
+          //let playerList = document.getElementById("player-list");        
+          let pElements = playerList.getElementsByTagName('p');
+
+          // Loop through all p elements and remove them from the div
+          while (pElements.length > 0) {
+            playerList.removeChild(pElements[0]);
+            console.log("removed");
           }
+          break;
+        case "start_game":
+          document.getElementById('jsform').submit();
+          break;
+      }
 
-          // document.querySelector('#game-code').onkeyup = function(e) {
-          //     if (e.keyCode === 13) { // enter, return
-          //         document.querySelector('#start-btn').click();
-          //     }
-          // }
-          const roomName = JSON.parse(document.getElementById('room-name').textContent);
-          document.querySelector('#test-btn').onclick = function(e){
-            chatSocket.send(JSON.stringify({
-              'type' : "print_name",
-          
-            }))
-          }
+    };
+    chatSocket.onopen = function (e) {
+      let playerList = document.getElementById("player-list");
+      let pElements = playerList.getElementsByTagName('p');
 
-          const chatSocket = new WebSocket(
-            'ws://'
-            + window.location.host
-            + '/ws/DoodleChamp/'
-            + roomName
-            + '/'
-          );
-
-          chatSocket.onmessage = function (e) {
-            let data = JSON.parse(e.data);
-            let playerList = document.getElementById("player-list");
-
-            switch(data.type) {
-              case "add_players":
-                ptag = document.createElement('p');
-                ptag.innerHTML = data.player;
-                playerList.appendChild(ptag);
-                break;
-              case "delete_players":
-                  //let playerList = document.getElementById("player-list");        
-                  let pElements = playerList.getElementsByTagName('p');
-
-                  // Loop through all p elements and remove them from the div
-                  while (pElements.length > 0) {
-                    playerList.removeChild(pElements[0]);
-                    console.log("removed");
-                  }
-                break;
-              case "start_game":
-                document.getElementById('jsform').submit();
-                break;
-            }
-            
-          };
-          chatSocket.onopen = function (e) {
-            let playerList = document.getElementById("player-list");         
-            let pElements = playerList.getElementsByTagName('p');
-
-            // Loop through all p elements and remove them from the div
-            while (pElements.length > 0) {
-              playerList.removeChild(pElements[0]);
-              console.log("removed");
-            }
-            console.log("connect");
-            chatSocket.send(JSON.stringify({
-              'type' : "DoodleChamp_app_player_joins",
-              'player': "{{username}}"
-            }))
-          }
-          chatSocket.onclose = function (e) {
-            console.error('Chat socket closed unexpectedly');
-          };
+      // Loop through all p elements and remove them from the div
+      while (pElements.length > 0) {
+        playerList.removeChild(pElements[0]);
+        console.log("removed");
+      }
+      console.log("connect");
+      chatSocket.send(JSON.stringify({
+        'type': "DoodleChamp_app_player_joins",
+        'player': "{{username}}"
+      }))
+    }
+    chatSocket.onclose = function (e) {
+      console.error('Chat socket closed unexpectedly');
+    };
   </script>
 </body>
 

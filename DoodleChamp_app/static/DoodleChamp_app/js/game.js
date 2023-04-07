@@ -172,7 +172,7 @@ chatSocket.onmessage = function(e){
   
 
   switch(data.type) {
-    case "add_players":
+    case "add_players": // Note: COMMENT IT OUT
       ptag = document.createElement('p');
       ptag.innerHTML = data.player;
       playerList.appendChild(ptag);
@@ -206,7 +206,6 @@ chatSocket.onmessage = function(e){
       //console.log('case undo2');
       break;
     case "show_drawer":
-      
         let curr_drawer = document.getElementsByClassName("isDrawer");
         if (curr_drawer.length > 0){
           curr_drawer[0].classList.remove("isDrawer");
@@ -215,7 +214,7 @@ chatSocket.onmessage = function(e){
         var pElems = document.getElementsByTagName("p");
         for (var i = 0; i < pElems.length; i++) {
           //console.log(pElems[i].innerHTML);
-          if (pElems[i].innerHTML === data.player) {
+          if (pElems[i].innerHTML.split(" | ")[0] === data.player) {
             //console.log(data.player);
             pElems[i].classList.add("isDrawer");
           }
@@ -223,12 +222,14 @@ chatSocket.onmessage = function(e){
         
       break;
     case "draw_turn":
+      cPushArray.fill();
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      cPush();
       if (data.player === username){
         let modalBtn = document.getElementById('see-words');
         modalBtn.click();
         drawTool = 0;
-        draw_tool_row.innerHTML = '<div id="draw-buttons"> Draw <button id="pencil-btn" class="btn-sm" onclick="pencil">&#9998</button> <button id="rectangle-btn" class="btn-sm" onclick="rectangle">&#11036</button><button id="line-btn" class="btn-sm" onclick="line">&#8213</button><button id="circle-btn" class="btn-sm" onclick="circle">&#x25EF</button><button id="undo-btn">undo</button><input type="Color" id="color-val" name="" class="form-control form-control-color" value="#000000"></div>';
+        draw_tool_row.innerHTML = '<div id="draw-buttons"> Draw <button id="pencil-btn" class="btn-sm" onclick="pencil">&#9998</button> <button id="rectangle-btn" hidden class="btn-sm" onclick="rectangle">&#11036</button><button id="line-btn" hidden class="btn-sm" onclick="line">&#8213</button><button id="circle-btn" hidden class="btn-sm" onclick="circle">&#x25EF</button><button id="undo-btn">undo</button><input type="Color" id="color-val" name="" class="form-control form-control-color" value="#000000"></div>';
         document.querySelector('#pencil-btn').onclick = function (e) {
           drawTool = 0;
         };
