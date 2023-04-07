@@ -30,6 +30,9 @@ class Game(models.Model):
     active_word = models.TextField(default = "")
     point_value = models.IntegerField(default = 0)
 
+# class Guess(models.Model):
+#     code = models.ForeignKey(Lobby, default=1, on_delete=models.CASCADE)
+    
 
 
 
