@@ -154,10 +154,13 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
             
         elif action_type == "next_player":
             print("next player")
-            await sync_to_async(player_rotate)(code = self.room_group_name)
+            
             round = await sync_to_async(check_round)(code = self.room_group_name)
-            if round == 0:
+            print(round)
+            if round <= 0:
                 await self.channel_layer.group_send(self.room_group_name, {"type": "end_game"})
+            else:
+                await sync_to_async(player_rotate)(code = self.room_group_name)
         elif action_type == "turn_ended":
              #is here since it only needs to be executed once
             await self.channel_layer.group_send(self.room_group_name, {"type": action_type})
@@ -300,9 +303,11 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
 
     async def end_game(self, event):
         scoreboard = await sync_to_async(final_scoreboard)(code = self.room_group_name)
+        print(scoreboard)
         for i, user in enumerate(scoreboard):
+            print(i)
             await self.send(text_data=json.dumps({"type": "end_game", "prompt": f"{i + 1}: {user.name} Points: {user.score}"}))
-
+        await self.send(text_data=json.dumps({"type": "end_modal"}))
         
 
         

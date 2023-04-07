@@ -1,134 +1,140 @@
 <!DOCTYPE html>
 <html>
-<div class="p-3 mb-2 bg-dark text-light vh-100">
 <header>
-  <meta charset="utf-8" />
-  <title>DoodleChamp lobby</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <meta charset="utf-8" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                DoodleChamp &#33;&reg;
+            </a>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">Join code: {{ room_name }}</a>
+                        {{ room_name|json_script:"room-name" }}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <style>
+        body {
+            overflow: hidden;
+            height: 100%;
+        }
+    </style>
 </header>
 
-<body>
-  <h2>Join code: {{ room_name }}</h2>
-
-  {{ room_name|json_script:"room-name" }}
-  <div class="container text-center col-2">
-    <!-- <div class="row"> -->
-      <!-- <div id="player-list" class="col border text-light table table-bordered table-secondary table-striped table-hover align-middle">
-        Player List
-      </div>
-      <div class="col border">
-        Settings
-      </div> -->
-      <div id="player-list" class="col border rounded text-light table table-bordered table-secondary table-striped table-hover align-middle">
-        <table  class="table rounded table-dark table-bordered table-striped table-hover align-middle">
-          <thead class="table-info text-center">
-            <tr>
-              <th class="text-center">Player List</th>
-            </tr>
-          </thead>
-        </table>
-      </div>
-      <!-- <div id="player-list" class="col border text-light table table-bordered table-secondary table-striped table-hover align-middle">
-        Player List
-      </div> -->
-  
-      <!-- <div class="col border rounded">
-        Settings
-      </div> -->
-    <!-- </div> -->
-  </div><br>
-  <div class="container text-center col-2">
-    <div class="col border rounded text-light table table-bordered table-secondary table-striped table-hover align-middle">
-      <table class="table rounded table-dark table-bordered table-striped table-hover align-middle">
-        <thead class="table-info text-center">
-          <tr>
-            <th class="text-center">Settings</th>
-          </tr>
-        </thead>
-      </table>
-    </div>
-  </div>
-  <br><br>
-  
-  <form id="jsform" action="Game" method = "POST">
-    <input type="hidden" value="{{ room_name }}" name="game-code">
-    <input type="hidden" value="{{username}}" name="username">
-    
-    
-    {% csrf_token %}
-  </form>
-  <button id="test-btn" disabled>Start test</button>
-  <script>
-          
-            
+<body class="d-flex flex-column bg-dark">
+    <div class="bg-dark">
+        <div class="container-fluid col-3 bg-dark justify-content-center text-center">
+            <div class="row">
+                <div class="col-md-6">
+                    <table id="player-list"
+                        class="table rounded table-dark table-bordered table-striped table-hover align-middle">
+                        <thead class="table-info text-center">
+                            <tr>
+                                <th class="text-center">Player List</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <table class="table rounded table-dark table-bordered table-striped table-hover align-middle">
+                        <thead class="table-info text-center">
+                            <tr>
+                                <th class="text-center">Settings</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
 
 
-          // document.querySelector('#game-code').onkeyup = function(e) {
-          //     if (e.keyCode === 13) { // enter, return
-          //         document.querySelector('#start-btn').click();
-          //     }
-          // }
-          const roomName = JSON.parse(document.getElementById('room-name').textContent);
-          document.querySelector('#test-btn').onclick = function(e){
-            chatSocket.send(JSON.stringify({
-              'type' : "print_name",
-          
-            }))
-          }
+        <br><br>
 
-          const chatSocket = new WebSocket(
-            'ws://'
-            + window.location.host
-            + '/ws/DoodleChamp/'
-            + roomName
-            + '/'
-          );
+        <form id="jsform" action="Game" method="POST">
+            <input type="hidden" value="{{ room_name }}" name="game-code">
+            <input type="hidden" value="{{username}}" name="username">
 
-          chatSocket.onmessage = function (e) {
-            let data = JSON.parse(e.data);
-            let playerList = document.getElementById("player-list");
 
-            switch(data.type) {
-              case "add_players":
-                ptag = document.createElement('p');
-                ptag.innerHTML = data.player;
-                playerList.appendChild(ptag);
-                break;
-              case "delete_players":
-                  //let playerList = document.getElementById("player-list");        
-                  let pElements = playerList.getElementsByTagName('p');
+            {% csrf_token %}
+        </form>
+        <button id="test-btn" hidden disabled>Start test</button>
 
-                  // Loop through all p elements and remove them from the div
-                  while (pElements.length > 0) {
+
+        <script>
+            // document.querySelector('#game-code').onkeyup = function(e) {
+            //     if (e.keyCode === 13) { // enter, return
+            //         document.querySelector('#start-btn').click();
+            //     }
+            // }
+            const roomName = JSON.parse(document.getElementById('room-name').textContent);
+            document.querySelector('#test-btn').onclick = function (e) {
+                chatSocket.send(JSON.stringify({
+                    'type': "print_name",
+
+                }))
+            }
+
+            const chatSocket = new WebSocket(
+                'ws://'
+                + window.location.host
+                + '/ws/DoodleChamp/'
+                + roomName
+                + '/'
+            );
+
+            chatSocket.onmessage = function (e) {
+                let data = JSON.parse(e.data);
+                let playerList = document.getElementById("player-list");
+
+                switch (data.type) {
+                    case "add_players":
+                        ptag = document.createElement('p');
+                        ptag.innerHTML = data.player;
+                        playerList.appendChild(ptag);
+                        break;
+                    case "delete_players":
+                        //let playerList = document.getElementById("player-list");        
+                        let pElements = playerList.getElementsByTagName('p');
+
+                        // Loop through all p elements and remove them from the div
+                        while (pElements.length > 0) {
+                            playerList.removeChild(pElements[0]);
+                            console.log("removed");
+                        }
+                        break;
+                    case "start_game":
+                        document.getElementById('jsform').submit();
+                        break;
+                }
+
+            };
+            chatSocket.onopen = function (e) {
+                let playerList = document.getElementById("player-list");
+                let pElements = playerList.getElementsByTagName('p');
+
+                // Loop through all p elements and remove them from the div
+                while (pElements.length > 0) {
                     playerList.removeChild(pElements[0]);
                     console.log("removed");
-                  }
-                break;
-              case "start_game":
-                document.getElementById('jsform').submit();
-                break;
+                }
+                chatSocket.send(JSON.stringify({
+                    'type': "DoodleChamp_app_player_joins",
+                    'player': "{{username}}"
+                }))
             }
-            
-          };
-          chatSocket.onopen = function (e) {
-            let playerList = document.getElementById("player-list");
-            let pElements = playerList.getElementsByTagName('p');
-
-            // Loop through all p elements and remove them from the div
-            while (pElements.length > 0) {
-              playerList.removeChild(pElements[0]);
-              console.log("removed");
-            }
-            chatSocket.send(JSON.stringify({
-              'type' : "DoodleChamp_app_player_joins",
-              'player': "{{username}}"
-            }))
-          }
-          chatSocket.onclose = function (e) {
-            console.error('Chat socket closed unexpectedly');
-          };
-  </script>
+            chatSocket.onclose = function (e) {
+                console.error('Chat socket closed unexpectedly');
+            };
+        </script>
+    </div>
 </body>
-</div>
+
 </html>
