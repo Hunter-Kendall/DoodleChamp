@@ -6,3 +6,4 @@ virtualenv
 .env
 DoodleChamp_app/migrations
 DoodleChamp_app/templates/game/test.html
+.env
