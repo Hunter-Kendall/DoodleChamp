@@ -4,6 +4,5 @@ __pycache__
 *.pyc
 virtualenv
 .env
-node_modules/
-package-lock.json
-package.json
+DoodleChamp_app/migrations
+DoodleChamp_app/templates/game/test.html
