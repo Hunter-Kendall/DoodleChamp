@@ -194,7 +194,15 @@ chatSocket.onmessage = function(e){
       ctx.lineTo(data.currentX, data.currentY);
       ctx.stroke();
       break;
-    
+
+    case "draw_rect":
+      ctx.strokeStyle = data.strokeStyle;
+      ctx.beginPath();
+      ctx.moveTo(data.lastX, data.lastY);
+      ctx.rect(data.lastX, data.lastY, data.currentX - data.lastX, data.currentY - data.lastY);
+      ctx.stroke();
+      break;
+          
     case "undo":
       //console.log('data pic: ' + data.pic);
       var cPic = new Image();
@@ -310,8 +318,9 @@ chatSocket.onmessage = function(e){
     
   }
 }
-canvas.addEventListener('mousemove', (event) => {
 
+// Drawing on mousemove
+canvas.addEventListener('mousemove', (event) => {
 
   if (isDrawing && drawTool === 0) {
     //drawing with pencil
@@ -357,10 +366,20 @@ canvas.addEventListener('mousemove', (event) => {
     ctx.strokeStyle = colorCode;
     ctx.stroke();
 
+    chatSocket.send(JSON.stringify({
+      'type': "draw_rect",
+      'lastX': lastX,
+      'lastY': lastY,
+      'currentX': currentX,
+      'currentY': currentY,
+      'strokeStyle': colorCode
+    }))
+
   };
 
 });
 
+// Drawing on mouseup
 canvas.addEventListener('mouseup', (event) => {
   isDrawing = false;
   if (drawTool == 1) {
