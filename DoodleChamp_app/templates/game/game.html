@@ -8,6 +8,13 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
   {% load static %}
   <link rel="stylesheet" href="{% static 'DoodleChamp_app/css/site.css' %}">
+  <style>
+    .chat-div {
+      height: 300px;
+      overflow-y: auto;
+      scroll-behavior: smooth;
+    }
+  </style>
 </header>
 
 <body>
@@ -31,9 +38,11 @@
       </div>
       <div id="chat" class="col border">
         chat
-        <div id="chat-div"></div>
-        <input id="chat-field" type="text" autofocus>
-        <button id="guess-btn" type="submit">guess</button>
+        <div id="chat-div" style="height: 300px; overflow-y: scroll;"></div>
+        <div id="guess-div">
+          <input id="chat-field" type="text" autofocus>
+          <button id="guess-btn" type="submit">guess</button>
+        </div>
       </div>
     </div>
     <div class="row">
@@ -53,18 +62,21 @@
   </div>
   <br>
 
-    <!-- Button trigger modal -->
-    <button id="see-words" hidden type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-      See Words
-    </button>
-    <button id="final-modal" hidden type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#finalmodal">
-      See scoreboard
-    </button>
-    <button id="test-btn" hidden>test</button>
-    <button id="end-btn" hidden>end</button>
+  <!-- Button trigger modal -->
+  <button id="see-words" hidden type="button" class="btn btn-primary" data-bs-toggle="modal"
+    data-bs-target="#exampleModal">
+    See Words
+  </button>
+  <button id="final-modal" hidden type="button" class="btn btn-primary" data-bs-toggle="modal"
+    data-bs-target="#finalmodal">
+    See scoreboard
+  </button>
+  <button id="test-btn" hidden>test</button>
+  <button id="end-btn" hidden>end</button>
 
   <!-- word Modal -->
-  <div class="modal modal-dark fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal modal-dark fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -79,25 +91,25 @@
     </div>
   </div>
 
-        <!-- scoreboard Modal -->
-        <div class="modal fade" id="finalmodal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">Final Score</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div id="scoreboard" class="modal-body">
-                
-              </div>
-            </div>
-          </div>
+  <!-- scoreboard Modal -->
+  <div class="modal fade" id="finalmodal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Final Score</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div id="scoreboard" class="modal-body">
 
         </div>
       </div>
     </div>
+  </div>
+  <div id="scoreboard" class="modal-body">
+
+  </div>
+  </div>
+  </div>
   </div>
 
   <script>

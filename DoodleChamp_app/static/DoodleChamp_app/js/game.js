@@ -98,8 +98,11 @@ let chatField = document.getElementById("chat-field");
 
 // focus on chatfield
 window.onload = function () {
-  document.getElementById("chat-field").focus();
+  chatField.focus();
 }
+
+// let chatDivScroll = document.getElementById("chat-div");
+// chatDivScroll.scrollTop = chatDivScroll.scrollHeight;
 
 // guesses through chat by pressing ENTER
 chatField.addEventListener('keydown', function (event) {
@@ -142,7 +145,8 @@ chatSocket.onmessage = function (e) {
   let playerList = document.getElementById("player-list");
   let hidden_word = document.getElementById("hidden-word");
   let chatDiv = document.getElementById('chat-div');
-  let scoreboard = document.getElementById('scoreboard')
+  let scoreboard = document.getElementById('scoreboard');
+  let guessDiv = document.getElementById('guess-div');
 
 
   switch (data.type) {
@@ -232,6 +236,7 @@ chatSocket.onmessage = function (e) {
         modalBtn.click();
         drawTool = -1;
         draw_tool_row.innerHTML = '<div id="draw-buttons"> Draw <button id="pencil-btn" class="btn-sm" onclick="pencil">&#9998</button> <button id="rectangle-btn" class="btn-sm" onclick="rectangle">&#11036</button><button id="line-btn" class="btn-sm" onclick="line">&#8213</button><button id="circle-btn" class="btn-sm" onclick="circle">&#x25EF</button><button id="undo-btn">undo</button><input type="Color" id="color-val" name="" class="form-control form-control-color" value="#000000"></div>';
+        guessDiv.innerHTML = '';
         document.querySelector('#pencil-btn').onclick = function (e) {
           drawTool = 0;
         };
@@ -262,7 +267,8 @@ chatSocket.onmessage = function (e) {
     case "turn_ended":
 
       draw_tool_row.innerHTML = "";
-
+      guessDiv.innerHTML = '<input id="chat-field" type="text" autofocus> <button id="guess-btn" type="submit">guess</button>';
+      chatDiv.innerHTML = '';
       drawTool = -1; // means no tool selected
       //console.log("w");
       // let endbtn = document.getElementById('end-btn');
@@ -299,6 +305,7 @@ chatSocket.onmessage = function (e) {
       pGuess = document.createElement('p');
       pGuess.innerHTML = data.msg
       chatDiv.appendChild(pGuess);
+      chatDiv.scrollTop = chatDiv.scrollHeight;
       console.log('case guess_return')
       break;
 

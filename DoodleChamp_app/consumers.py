@@ -343,7 +343,7 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
         guess = event["guess"]
         player = event["player"]
         if guess == current_word.active_word:
-            await self.send(text_data=json.dumps({"type": "guess_return", "msg": f"{player} has guessed the word"}))
+            await self.send(text_data=json.dumps({"type": "guess_return", "msg": f"{player} has guessed the word: {guess}"}))
             await self.channel_layer.group_send(self.room_group_name, {"type": "round", "player": player})
         else:
             await self.send(text_data=json.dumps({"type": "guess_return", "msg": f"{player}: {guess}"}))
