@@ -140,6 +140,27 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
                                                                         "currentY": text_data_json["currentY"],
                                                                         "strokeStyle": text_data_json["strokeStyle"]
             })
+        elif action_type == "draw_rect":
+            await self.channel_layer.group_send(self.room_group_name, {"type": action_type, "lastX": text_data_json["lastX"],
+                                                                        "lastY": text_data_json["lastY"],
+                                                                        "currentX": text_data_json["currentX"],
+                                                                        "currentY": text_data_json["currentY"],
+                                                                        "strokeStyle": text_data_json["strokeStyle"]
+        })
+        elif action_type == "draw_line":
+            await self.channel_layer.group_send(self.room_group_name, {"type": action_type, "lastX": text_data_json["lastX"],
+                                                                        "lastY": text_data_json["lastY"],
+                                                                        "currentX": text_data_json["currentX"],
+                                                                        "currentY": text_data_json["currentY"],
+                                                                        "strokeStyle": text_data_json["strokeStyle"]
+        })
+        elif action_type == "draw_circle":
+            await self.channel_layer.group_send(self.room_group_name, {"type": action_type, "lastX": text_data_json["lastX"],
+                                                                        "lastY": text_data_json["lastY"],
+                                                                        "currentX": text_data_json["currentX"],
+                                                                        "currentY": text_data_json["currentY"],
+                                                                        "strokeStyle": text_data_json["strokeStyle"]
+        })
         elif action_type == "print_name":
             await self.channel_layer.group_send(self.room_group_name, {"type": action_type})
         elif action_type == "undo":
@@ -210,6 +231,51 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
         strokeStyle = event["strokeStyle"]
         
         await self.send(text_data=json.dumps({"type": "draw_stroke",
+                                              "currentX": currentX,
+                                              "currentY": currentY,
+                                              "lastX": lastX, 
+                                              "lastY": lastY,
+                                              "strokeStyle": strokeStyle}))
+    async def draw_rect(self, event):
+        #print(self.username)
+        currentX = event["currentX"]
+        currentY = event["currentY"]
+        lastX = event["lastX"]
+        lastY = event["lastY"]
+        #print(currentX, "currentX")
+        strokeStyle = event["strokeStyle"]
+        
+        await self.send(text_data=json.dumps({"type": "draw_rect",
+                                              "currentX": currentX,
+                                              "currentY": currentY,
+                                              "lastX": lastX, 
+                                              "lastY": lastY,
+                                              "strokeStyle": strokeStyle}))
+
+    async def draw_line(self, event):
+        #print(self.username)
+        currentX = event["currentX"]
+        currentY = event["currentY"]
+        lastX = event["lastX"]
+        lastY = event["lastY"]
+        #print(currentX, "currentX")
+        strokeStyle = event["strokeStyle"]
+        await self.send(text_data=json.dumps({"type": "draw_line",
+                                              "currentX": currentX,
+                                              "currentY": currentY,
+                                              "lastX": lastX, 
+                                              "lastY": lastY,
+                                              "strokeStyle": strokeStyle}))
+
+    async def draw_circle(self, event):
+        #print(self.username)
+        currentX = event["currentX"]
+        currentY = event["currentY"]
+        lastX = event["lastX"]
+        lastY = event["lastY"]
+        #print(currentX, "currentX")
+        strokeStyle = event["strokeStyle"]
+        await self.send(text_data=json.dumps({"type": "draw_circle",
                                               "currentX": currentX,
                                               "currentY": currentY,
                                               "lastX": lastX, 
