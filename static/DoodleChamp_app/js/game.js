@@ -16,18 +16,15 @@ let value1 = 0;
 let word2 = '';
 let value2 = 0;
 
-
+// push canvas.toDataURL
 function cPush() {
   cStep++;
   if (cStep < cPushArray.length) { cPushArray.length = cStep; }
   cPushArray.push(canvas.toDataURL());
-
-
-  ////console.log('first array ' + cPushArray[cStep])
-
 }
 cPush();
 
+// undo to previous canvas
 function cUndo() {
 
   if (cStep > 0) {
@@ -41,43 +38,22 @@ function cUndo() {
   }
 }
 
+// show words
 function seeWords() {
-  ////console.log('seeWords() called')
   chatSocket.send(JSON.stringify({
     'type': 'see_words'
   }));
 }
 
-// document.querySelector('#pencil-btn').onclick = function (e) {
-//   drawTool = 0;
-// };
-
-// document.querySelector('#rectangle-btn').onclick = function (e) {
-//   drawTool = 1;
-// };
-
-// document.querySelector('#line-btn').onclick = function (e) {
-//   drawTool = 2;
-// };
-
-// document.querySelector('#circle-btn').onclick = function (e) {
-//   drawTool = 3;
-// };
-
-// document.querySelector('#undo-btn').onclick = function () {
-//   cUndo();
-// };
-
-// document.querySelector('#color-val').onchange = function () {
-//   colorCode = document.querySelector('#color-val').value;
-// };
+// test-btn
 document.querySelector('#test-btn').onclick = function () {
-  
+
   chatSocket.send(JSON.stringify({
     'type': "draw_turn"
   }))
 };
 
+// end turns
 document.querySelector('#end-btn').onclick = function () {
   //console.log("test");
   chatSocket.send(JSON.stringify({
@@ -85,8 +61,8 @@ document.querySelector('#end-btn').onclick = function () {
   }))
 };
 
-document.querySelector("#word-btn1").onclick = function (){
-  // let selected_word = this.innerHTML;
+// selects word 1
+document.querySelector("#word-btn1").onclick = function () {
   let selected_word = word1
   console.log('Selected_word: ' + selected_word)
   chatSocket.send(JSON.stringify({
@@ -97,11 +73,10 @@ document.querySelector("#word-btn1").onclick = function (){
   chatSocket.send(JSON.stringify({
     'type': "next_player"
   }));
-  // console.log("1")
 };
-//gabriel: this is how the word button should be selected
-document.querySelector("#word-btn2").onclick = function (){
-  // let selected_word = this.innerHTML;
+
+// selects word 2
+document.querySelector("#word-btn2").onclick = function () {
   let selected_word = word2
   console.log('Selected_word: ' + selected_word)
   chatSocket.send(JSON.stringify({
@@ -112,22 +87,25 @@ document.querySelector("#word-btn2").onclick = function (){
   chatSocket.send(JSON.stringify({
     'type': "next_player"
   }));
-  // console.log("2")
-  
 };
-//gabriel: this is how the word button should be selected
 
+// see words button
 document.querySelector('#see-words').onclick = function () {
   seeWords();
 };
 
 let chatField = document.getElementById("chat-field");
 
-window.onload = function() {
-  document.getElementById("chat-field").focus();
+// focus on chatfield
+window.onload = function () {
+  chatField.focus();
 }
 
-chatField.addEventListener('keydown', function(event) {
+// let chatDivScroll = document.getElementById("chat-div");
+// chatDivScroll.scrollTop = chatDivScroll.scrollHeight;
+
+// guesses through chat by pressing ENTER
+chatField.addEventListener('keydown', function (event) {
   if (event.key === 'Enter' && !event.shiftKey) {
     event.preventDefault();
     document.getElementById('')
@@ -136,18 +114,18 @@ chatField.addEventListener('keydown', function(event) {
   }
 });
 
+// sends guess through socket
 document.querySelector('#guess-btn').onclick = function () {
   chatSocket.send(JSON.stringify({
     'type': "guess",
     'guess': document.getElementById("chat-field").value,
     'player': username
   }))
-  // console.log(chatField.value)
   chatField.value = "";
 
 };
 
-
+// listens for when mouse is clicked on canvas
 canvas.addEventListener('mousedown', (event) => {
 
   isDrawing = true;
@@ -155,38 +133,41 @@ canvas.addEventListener('mousedown', (event) => {
   lastY = event.clientY - canvas.offsetTop;
   background = canvas.toDataURL();
 
-
 });
 
 
 
-// Client getting the messages
-chatSocket.onmessage = function(e){
+// Client receiving the messages
+chatSocket.onmessage = function (e) {
   let draw_tool_row = document.getElementById('draw-tools');
   let data = JSON.parse(e.data);
   let wordList = document.getElementById("words-list");
   let playerList = document.getElementById("player-list");
   let hidden_word = document.getElementById("hidden-word");
   let chatDiv = document.getElementById('chat-div');
-  let scoreboard = document.getElementById('scoreboard')
-  
+  let scoreboard = document.getElementById('scoreboard');
+  let guessDiv = document.getElementById('guess-div');
 
-  switch(data.type) {
+
+  switch (data.type) {
+
     case "add_players": // Note: COMMENT IT OUT
       ptag = document.createElement('p');
       ptag.innerHTML = data.player;
       playerList.appendChild(ptag);
       break;
-    case "delete_players":
-        //let playerList = document.getElementById("player-list");        
-        let pElements = playerList.getElementsByTagName('p');
 
-        // Loop through all p elements and remove them from the div
-        while (pElements.length > 0) {
-          playerList.removeChild(pElements[0]);
-          //console.log("removed");
-        }
+    case "delete_players":
+      //let playerList = document.getElementById("player-list");        
+      let pElements = playerList.getElementsByTagName('p');
+
+      // Loop through all p elements and remove them from the div
+      while (pElements.length > 0) {
+        playerList.removeChild(pElements[0]);
+        //console.log("removed");
+      }
       break;
+
     case "draw_stroke":
       ctx.strokeStyle = data.strokeStyle;
       ctx.beginPath();
@@ -194,7 +175,30 @@ chatSocket.onmessage = function(e){
       ctx.lineTo(data.currentX, data.currentY);
       ctx.stroke();
       break;
+
+    case "draw_rect":
+      ctx.strokeStyle = data.strokeStyle;
+      ctx.beginPath();
+      ctx.moveTo(data.lastX, data.lastY);
+      ctx.rect(data.lastX, data.lastY, data.currentX - data.lastX, data.currentY - data.lastY);
+      ctx.stroke();
+      break;
+
+    case "draw_line":
+      ctx.strokeStyle = data.strokeStyle;
+      ctx.beginPath();
+      ctx.moveTo(data.lastX, data.lastY);
+      ctx.lineTo(data.currentX, data.currentY);
+      ctx.stroke();
+      break;
     
+    case "draw_circle":
+      ctx.strokeStyle = data.strokeStyle;
+      ctx.beginPath();
+      ctx.arc(data.currentX - (data.currentX - data.lastX) / 2, data.currentY - (data.currentY - data.lastY) / 2, (data.currentX - data.lastX) / 2, 0 * Math.PI, 2 * Math.PI);
+      ctx.stroke();
+      break;
+
     case "undo":
       //console.log('data pic: ' + data.pic);
       var cPic = new Image();
@@ -205,68 +209,72 @@ chatSocket.onmessage = function(e){
       cPic.src = data.pic;
       //console.log('case undo2');
       break;
-    case "show_drawer":
-        let curr_drawer = document.getElementsByClassName("isDrawer");
-        if (curr_drawer.length > 0){
-          curr_drawer[0].classList.remove("isDrawer");
-        }
 
-        var pElems = document.getElementsByTagName("p");
-        for (var i = 0; i < pElems.length; i++) {
-          //console.log(pElems[i].innerHTML);
-          if (pElems[i].innerHTML.split(" | ")[0] === data.player) {
-            //console.log(data.player);
-            pElems[i].classList.add("isDrawer");
-          }
+    case "show_drawer":
+      let curr_drawer = document.getElementsByClassName("isDrawer");
+      if (curr_drawer.length > 0) {
+        curr_drawer[0].classList.remove("isDrawer");
+      }
+
+      var pElems = document.getElementsByTagName("p");
+      for (var i = 0; i < pElems.length; i++) {
+        //console.log(pElems[i].innerHTML);
+        if (pElems[i].innerHTML.split(" | ")[0] === data.player) {
+          //console.log(data.player);
+          pElems[i].classList.add("isDrawer");
         }
-        
+      }
+
       break;
+
     case "draw_turn":
       cPushArray.fill();
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       cPush();
-      if (data.player === username){
+      if (data.player === username) {
         let modalBtn = document.getElementById('see-words');
         modalBtn.click();
-        drawTool = 0;
-        draw_tool_row.innerHTML = '<div id="draw-buttons"> Draw <button id="pencil-btn" class="btn-sm" onclick="pencil">&#9998</button> <button id="rectangle-btn" hidden class="btn-sm" onclick="rectangle">&#11036</button><button id="line-btn" hidden class="btn-sm" onclick="line">&#8213</button><button id="circle-btn" hidden class="btn-sm" onclick="circle">&#x25EF</button><button id="undo-btn">undo</button><input type="Color" id="color-val" name="" class="form-control form-control-color" value="#000000"></div>';
+        drawTool = -1;
+        draw_tool_row.innerHTML = '<div id="draw-buttons"> Draw <button id="pencil-btn" class="btn-sm" onclick="pencil">&#9998</button> <button id="rectangle-btn" class="btn-sm" onclick="rectangle">&#11036</button><button id="line-btn" class="btn-sm" onclick="line">&#8213</button><button id="circle-btn" class="btn-sm" onclick="circle">&#x25EF</button><button id="undo-btn">undo</button><input type="Color" id="color-val" name="" class="form-control form-control-color" value="#000000"></div>';
+        guessDiv.innerHTML = '';
         document.querySelector('#pencil-btn').onclick = function (e) {
           drawTool = 0;
         };
-        
+
         document.querySelector('#rectangle-btn').onclick = function (e) {
           drawTool = 1;
         };
-        
+
         document.querySelector('#line-btn').onclick = function (e) {
           drawTool = 2;
         };
-        
+
         document.querySelector('#circle-btn').onclick = function (e) {
           drawTool = 3;
         };
-        
+
         document.querySelector('#undo-btn').onclick = function () {
           cUndo();
         };
-        
+
         document.querySelector('#color-val').onchange = function () {
           colorCode = document.querySelector('#color-val').value;
         };
       };
 
       break;
+
     case "turn_ended":
 
       draw_tool_row.innerHTML = "";
-
+      guessDiv.innerHTML = '<input id="chat-field" type="text" autofocus> <button id="guess-btn" type="submit">guess</button>';
+      chatDiv.innerHTML = '';
       drawTool = -1; // means no tool selected
       //console.log("w");
       // let endbtn = document.getElementById('end-btn');
       // endbtn.click();
       break;
 
-      
     case "see_words":
       let pWords = wordList.getElementsByTagName('p');
 
@@ -297,31 +305,34 @@ chatSocket.onmessage = function(e){
       pGuess = document.createElement('p');
       pGuess.innerHTML = data.msg
       chatDiv.appendChild(pGuess);
+      chatDiv.scrollTop = chatDiv.scrollHeight;
       console.log('case guess_return')
       break;
+
     case "end_modal":
       document.getElementById('final-modal').click();
-    
+
     case "end_game":
       ptag = document.createElement('p');
       ptag.innerHTML = data.prompt;
       scoreboard.appendChild(ptag);
       break;
-    
+
   }
 }
+
+// Drawing on mousemove
 canvas.addEventListener('mousemove', (event) => {
 
-
+  //live drawing with pencil
   if (isDrawing && drawTool === 0) {
-    //drawing with pencil
     const currentX = event.clientX - canvas.offsetLeft;
     const currentY = event.clientY - canvas.offsetTop;
     ctx.strokeStyle = colorCode
     ctx.beginPath();
     ctx.moveTo(lastX, lastY);
     ctx.lineTo(currentX, currentY);
-    ctx.stroke();    
+    ctx.stroke();
     chatSocket.send(JSON.stringify({
       'type': "draw_stroke",
       'lastX': lastX,
@@ -330,14 +341,13 @@ canvas.addEventListener('mousemove', (event) => {
       'currentY': currentY,
       'strokeStyle': colorCode
     }))
-   
+
     lastX = currentX;
     lastY = currentY;
-   };
+  };
 
+  //live rectangle view
   if (isDrawing && drawTool === 1) {
-    //live rectangle view
-
     const currentX = event.clientX - canvas.offsetLeft;
     const currentY = event.clientY - canvas.offsetTop;
 
@@ -356,15 +366,61 @@ canvas.addEventListener('mousemove', (event) => {
     ctx.rect(lastX, lastY, currentX - lastX, currentY - lastY);
     ctx.strokeStyle = colorCode;
     ctx.stroke();
+  };
+
+  //live line view
+  if (isDrawing && drawTool === 2) {
+    const currentX = event.clientX - canvas.offsetLeft;
+    const currentY = event.clientY - canvas.offsetTop;
+    ctx.strokeStyle = colorCode
+
+    cPic_rect.onload = function () {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(cPic_rect, 0, 0);
+    }
+    cPic_rect.src = background;
+    if (cPic_rect.complete) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(cPic_rect, 0, 0);
+    }
+
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(currentX, currentY);
+    ctx.stroke();
+
+  };
+
+  //live circle view
+  if (isDrawing && drawTool === 3) {
+    const currentX = event.clientX - canvas.offsetLeft;
+    const currentY = event.clientY - canvas.offsetTop;
+    ctx.strokeStyle = colorCode
+
+    cPic_rect.onload = function () {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(cPic_rect, 0, 0);
+    }
+    cPic_rect.src = background;
+    if (cPic_rect.complete) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(cPic_rect, 0, 0);
+    }
+
+    ctx.beginPath();
+    ctx.arc(currentX - (currentX - lastX) / 2, currentY - (currentY - lastY) / 2, (currentX - lastX) / 2, 0 * Math.PI, 2 * Math.PI)
+    ctx.stroke();
 
   };
 
 });
 
+// Drawing on mouseup
 canvas.addEventListener('mouseup', (event) => {
   isDrawing = false;
+  
+  //drawing rectangle
   if (drawTool == 1) {
-    //drawing rectangle
     const currentX = event.clientX - canvas.offsetLeft;
     const currentY = event.clientY - canvas.offsetTop;
     ctx.strokeStyle = colorCode
@@ -372,10 +428,19 @@ canvas.addEventListener('mouseup', (event) => {
     ctx.moveTo(lastX, lastY);
     ctx.rect(lastX, lastY, currentX - lastX, currentY - lastY);
     ctx.stroke();
+
+    chatSocket.send(JSON.stringify({
+      'type': "draw_rect",
+      'lastX': lastX,
+      'lastY': lastY,
+      'currentX': currentX,
+      'currentY': currentY,
+      'strokeStyle': colorCode
+    }))
   }
 
+  //drawing line
   if (drawTool === 2) {
-    //drawing line
     const currentX = event.clientX - canvas.offsetLeft;
     const currentY = event.clientY - canvas.offsetTop;
     ctx.strokeStyle = colorCode
@@ -383,16 +448,34 @@ canvas.addEventListener('mouseup', (event) => {
     ctx.moveTo(lastX, lastY);
     ctx.lineTo(currentX, currentY);
     ctx.stroke();
+
+    chatSocket.send(JSON.stringify({
+      'type': "draw_line",
+      'lastX': lastX,
+      'lastY': lastY,
+      'currentX': currentX,
+      'currentY': currentY,
+      'strokeStyle': colorCode
+    }))
   }
 
+  //drawing circle
   if (drawTool === 3) {
-    //drawing circle
     const currentX = event.clientX - canvas.offsetLeft;
     const currentY = event.clientY - canvas.offsetTop;
     ctx.strokeStyle = colorCode
     ctx.beginPath();
     ctx.arc(currentX - (currentX - lastX) / 2, currentY - (currentY - lastY) / 2, (currentX - lastX) / 2, 0 * Math.PI, 2 * Math.PI)
     ctx.stroke();
+
+    chatSocket.send(JSON.stringify({
+      'type': "draw_circle",
+      'lastX': lastX,
+      'lastY': lastY,
+      'currentX': currentX,
+      'currentY': currentY,
+      'strokeStyle': colorCode
+    }))
   }
 
   cPush();

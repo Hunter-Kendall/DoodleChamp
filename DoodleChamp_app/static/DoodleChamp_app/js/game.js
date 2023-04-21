@@ -1,4 +1,3 @@
-// last
 const canvas = document.getElementById("draw-area");
 const ctx = canvas.getContext("2d");
 let cPushArray = new Array();
