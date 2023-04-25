@@ -79,6 +79,9 @@ document.querySelector("#word-btn1").onclick = function () {
   chatSocket.send(JSON.stringify({
     'type': "next_player"
   }));
+  chatSocket.send(JSON.stringify({
+    'type': "empty_chat"
+  }));
 };
 
 // selects word 2
@@ -92,6 +95,9 @@ document.querySelector("#word-btn2").onclick = function () {
   }));
   chatSocket.send(JSON.stringify({
     'type': "next_player"
+  }));
+  chatSocket.send(JSON.stringify({
+    'type': "empty_chat"
   }));
 };
 
@@ -274,11 +280,14 @@ chatSocket.onmessage = function (e) {
 
       draw_tool_row.innerHTML = "";
       guessDiv.innerHTML = '<input id="chat-field" type="text" autofocus> <button id="guess-btn" type="submit">guess</button>';
-      chatDiv.innerHTML = '';
       drawTool = -1; // means no tool selected
       //console.log("w");
       // let endbtn = document.getElementById('end-btn');
       // endbtn.click();
+      break;
+    
+    case "empty_chat":
+      chatDiv.innerHTML = '';
       break;
 
     case "see_words":

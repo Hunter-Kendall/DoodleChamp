@@ -185,6 +185,8 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
         elif action_type == "turn_ended":
              #is here since it only needs to be executed once
             await self.channel_layer.group_send(self.room_group_name, {"type": action_type})
+        elif action_type == "empty_chat":
+            await self.channel_layer.group_send(self.room_group_name, {"type": action_type})
         elif action_type == "set_player_list":
             await self.channel_layer.group_send(self.room_group_name, {"type": action_type})
         elif action_type == "set_word":
@@ -328,6 +330,9 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
         #     await self.send(text_data=json.dumps({"type": "add_players", "player": f"{user.name} | {user.score}"}))
         
         print("turn ended")
+
+    async def empty_chat(self, event):
+        await self.send(text_data=json.dumps({"type": "empty_chat"}))      
 
     async def show_word(self, event):
         current_word = await sync_to_async(curr_word)(code = self.room_group_name)
