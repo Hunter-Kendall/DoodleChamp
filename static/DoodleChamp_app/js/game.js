@@ -22,7 +22,7 @@ function cPush() {
   if (cStep < cPushArray.length) { cPushArray.length = cStep; }
   cPushArray.push(canvas.toDataURL());
 }
-cPush();
+
 
 // undo to previous canvas
 function cUndo() {

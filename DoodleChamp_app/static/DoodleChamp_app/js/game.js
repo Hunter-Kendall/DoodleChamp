@@ -1,4 +1,4 @@
-const canvas = document.getElementById("draw-area");
+let canvas = document.getElementById("draw-area");
 const ctx = canvas.getContext("2d");
 let cPushArray = new Array();
 let cStep = -1;
@@ -15,6 +15,10 @@ let word1 = '';
 let value1 = 0;
 let word2 = '';
 let value2 = 0;
+let canvasContainer = document.getElementById("canvas-container");
+
+canvas.width = canvasContainer.clientWidth - 50;
+canvas.height = canvasContainer.clientHeight;
 
 // push canvas.toDataURL
 function cPush() {
@@ -22,10 +26,12 @@ function cPush() {
   if (cStep < cPushArray.length) { cPushArray.length = cStep; }
   cPushArray.push(canvas.toDataURL());
 }
-cPush();
+
+console.log('cStep at the beginning: ' + cStep)
 
 // undo to previous canvas
 function cUndo() {
+  console.log('cStep when cUndo is called: ' + cStep)
 
   if (cStep > 0) {
     cStep--;
@@ -235,7 +241,7 @@ chatSocket.onmessage = function (e) {
         let modalBtn = document.getElementById('see-words');
         modalBtn.click();
         drawTool = -1;
-        draw_tool_row.innerHTML = '<div id="draw-buttons"> Draw <button id="pencil-btn" class="btn-sm" onclick="pencil">&#9998</button> <button id="rectangle-btn" class="btn-sm" onclick="rectangle">&#11036</button><button id="line-btn" class="btn-sm" onclick="line">&#8213</button><button id="circle-btn" class="btn-sm" onclick="circle">&#x25EF</button><button id="undo-btn">undo</button><input type="Color" id="color-val" name="" class="form-control form-control-color" value="#000000"></div>';
+        draw_tool_row.innerHTML = '<div id="draw-buttons"> Draw <button id="pencil-btn" class="btn-sm" onclick="pencil">&#9998</button> <button id="rectangle-btn" class="btn-sm" onclick="rectangle">&#11036</button><button id="line-btn" class="btn-sm" onclick="line">&#8213</button><button id="circle-btn" class="btn-sm" onclick="circle">&#x25EF</button><button id="undo-btn">undo</button> <input type="Color" id="color-val" name="" class="form-control form-control-color" value="#000000"></div>';
         guessDiv.innerHTML = '';
         document.querySelector('#pencil-btn').onclick = function (e) {
           drawTool = 0;
