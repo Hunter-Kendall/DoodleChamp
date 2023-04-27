@@ -56,38 +56,20 @@ function hideDiv() {
 function showDiv() {
   let div = document.getElementById("guess-div");
   div.style.display = "block";
-}
-
-// hide draw div
-function hideDrawDiv() {
-  let div = document.getElementById("draw-tools");
-  div.style.visibility = "hidden";
-}
-
-// show draw div
-function showDrawDiv() {
-  let div = document.getElementById("draw-tools");
-  div.style.visibility = "visible";
+  console.log('Show guess div')
 }
 
 // hide show-word div
 function hideWordDiv() {
   let div = document.getElementById("see-word-div");
   div.style.display = "none";
-  console.log('hide word div');
 }
 
 // show show-word div
 function showWordDiv() {
   let div = document.getElementById("see-word-div");
   div.style.display = "block";
-  console.log('show word div');
 }
-
-// function showWordDrawer() {
-//   let div = document.getElementById("show-word-div");
-//   div.style.display = "block";
-// }
 
 // show words
 function seeWords() {
@@ -159,10 +141,6 @@ document.querySelector('#see-words').onclick = function () {
 
 let chatField = document.getElementById("chat-field");
 
-// focus on chatfield
-window.onload = function () {
-  chatField.focus();
-};
 
 // let chatDivScroll = document.getElementById("chat-div");
 // chatDivScroll.scrollTop = chatDivScroll.scrollHeight;
@@ -299,10 +277,10 @@ chatSocket.onmessage = function (e) {
         let modalBtn = document.getElementById('see-words');
         modalBtn.click();
         drawTool = -1;
-        // draw_tool_row.innerHTML = '<div id="draw-buttons"> Draw <button id="pencil-btn" class="btn-sm" onclick="pencil">&#9998</button> <button id="rectangle-btn" class="btn-sm" onclick="rectangle">&#11036</button><button id="line-btn" class="btn-sm" onclick="line">&#8213</button><button id="circle-btn" class="btn-sm" onclick="circle">&#x25EF</button><button id="undo-btn">undo</button> <input type="Color" id="color-val" name="" class="form-control form-control-color" value="#000000"></div>';
+        draw_tool_row.innerHTML = '<div id="draw-buttons"> Draw <button id="pencil-btn" class="btn-sm" onclick="pencil">&#9998</button> <button id="rectangle-btn" class="btn-sm" onclick="rectangle">&#11036</button><button id="line-btn" class="btn-sm" onclick="line">&#8213</button><button id="circle-btn" class="btn-sm" onclick="circle">&#x25EF</button><button id="undo-btn">undo</button> <input type="Color" id="color-val" name="" class="form-control form-control-color" value="#000000"></div>';
         hideDiv();
         showWordDiv();
-        showDrawDiv();
+        // showDrawDiv();
         
         document.querySelector('#pencil-btn').onclick = function (e) {
           drawTool = 0;
@@ -333,10 +311,10 @@ chatSocket.onmessage = function (e) {
 
     case "turn_ended":
 
-      // draw_tool_row.innerHTML = "";
+      draw_tool_row.innerHTML = "";
       showDiv();
       hideWordDiv();
-      hideDrawDiv();
+      // hideDrawDiv();
       // sends guess through socket
       document.querySelector('#guess-btn').onclick = function () {
         chatSocket.send(JSON.stringify({

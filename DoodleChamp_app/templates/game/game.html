@@ -84,7 +84,7 @@
                     <h6>Chat</h6>
                     <div id="chat-div" class="mx-auto w-100 w-md-75 w-lg-50 max-width-500px"
                         style="height: 400px; overflow-y: scroll; word-wrap: break-word; text-align: left;"></div><br>
-                    <div id="guess-div">
+                    <div id="guess-div" style="visibility: visible;">
                         <input id="chat-field" type="text" autofocus>
                         <button class="btn btn-sm btn-outline-success me-2 text-light" id="guess-btn"
                             type="submit">Guess!</button>
@@ -92,14 +92,7 @@
                 </div>
             </div>
             <div class="row">
-                <div id="draw-tools" style="visibility: hidden;" class="col-md-2 offset-md-4 border d-flex justify-content-center">
-                    <div id="draw-buttons"> Draw <button id="pencil-btn" class="btn-sm" onclick="pencil">&#9998</button>
-                        <button id="rectangle-btn" class="btn-sm" onclick="rectangle">&#11036</button>
-                        <button id="line-btn" class="btn-sm" onclick="line">&#8213</button>
-                        <button id="circle-btn" class="btn-sm" onclick="circle">&#x25EF</button>
-                        <button id="undo-btn">undo</button> <input type="Color" id="color-val" name="" class="form-control form-control-color" value="#000000">
-                    </div>
-                </div>
+                <div id="draw-tools" class="col-md-2 offset-md-4 border d-flex justify-content-center"></div>
             </div>
         </div>
     </div>
