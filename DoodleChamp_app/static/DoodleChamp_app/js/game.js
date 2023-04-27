@@ -16,6 +16,8 @@ let value1 = 0;
 let word2 = '';
 let value2 = 0;
 let canvasContainer = document.getElementById("canvas-container");
+let seeWordModal = document.getElementById("see-word-list");
+
 
 canvas.width = canvasContainer.clientWidth - 50;
 canvas.height = canvasContainer.clientHeight;
@@ -44,6 +46,49 @@ function cUndo() {
   }
 }
 
+// hide guess div
+function hideDiv() {
+  let div = document.getElementById("guess-div");
+  div.style.display = "none";
+}
+
+// show guess div
+function showDiv() {
+  let div = document.getElementById("guess-div");
+  div.style.display = "block";
+}
+
+// hide draw div
+function hideDrawDiv() {
+  let div = document.getElementById("draw-tools");
+  div.style.visibility = "hidden";
+}
+
+// show draw div
+function showDrawDiv() {
+  let div = document.getElementById("draw-tools");
+  div.style.visibility = "visible";
+}
+
+// hide show-word div
+function hideWordDiv() {
+  let div = document.getElementById("see-word-div");
+  div.style.display = "none";
+  console.log('hide word div');
+}
+
+// show show-word div
+function showWordDiv() {
+  let div = document.getElementById("see-word-div");
+  div.style.display = "block";
+  console.log('show word div');
+}
+
+// function showWordDrawer() {
+//   let div = document.getElementById("show-word-div");
+//   div.style.display = "block";
+// }
+
 // show words
 function seeWords() {
   chatSocket.send(JSON.stringify({
@@ -70,6 +115,11 @@ document.querySelector('#end-btn').onclick = function () {
 // selects word 1
 document.querySelector("#word-btn1").onclick = function () {
   let selected_word = word1
+  // let currentWord = data.actual_word;
+  //     console.log('actual word: ' + data.actual_word) 
+  //     console.log('currentWord: ' + currentWord)
+  //     seeWordModal.innerHTML = currentWord
+  seeWordModal.innerHTML = selected_word
   console.log('Selected_word: ' + selected_word)
   chatSocket.send(JSON.stringify({
     'type': "set_word",
@@ -87,6 +137,7 @@ document.querySelector("#word-btn1").onclick = function () {
 // selects word 2
 document.querySelector("#word-btn2").onclick = function () {
   let selected_word = word2
+  seeWordModal.innerHTML = selected_word
   console.log('Selected_word: ' + selected_word)
   chatSocket.send(JSON.stringify({
     'type': "set_word",
@@ -111,7 +162,7 @@ let chatField = document.getElementById("chat-field");
 // focus on chatfield
 window.onload = function () {
   chatField.focus();
-}
+};
 
 // let chatDivScroll = document.getElementById("chat-div");
 // chatDivScroll.scrollTop = chatDivScroll.scrollHeight;
@@ -158,7 +209,7 @@ chatSocket.onmessage = function (e) {
   let hidden_word = document.getElementById("hidden-word");
   let chatDiv = document.getElementById('chat-div');
   let scoreboard = document.getElementById('scoreboard');
-  let guessDiv = document.getElementById('guess-div');
+  
 
 
   switch (data.type) {
@@ -203,7 +254,7 @@ chatSocket.onmessage = function (e) {
       ctx.lineTo(data.currentX, data.currentY);
       ctx.stroke();
       break;
-    
+
     case "draw_circle":
       ctx.strokeStyle = data.strokeStyle;
       ctx.beginPath();
@@ -239,6 +290,7 @@ chatSocket.onmessage = function (e) {
 
       break;
 
+    
     case "draw_turn":
       cPushArray.fill();
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -247,8 +299,11 @@ chatSocket.onmessage = function (e) {
         let modalBtn = document.getElementById('see-words');
         modalBtn.click();
         drawTool = -1;
-        draw_tool_row.innerHTML = '<div id="draw-buttons"> Draw <button id="pencil-btn" class="btn-sm" onclick="pencil">&#9998</button> <button id="rectangle-btn" class="btn-sm" onclick="rectangle">&#11036</button><button id="line-btn" class="btn-sm" onclick="line">&#8213</button><button id="circle-btn" class="btn-sm" onclick="circle">&#x25EF</button><button id="undo-btn">undo</button> <input type="Color" id="color-val" name="" class="form-control form-control-color" value="#000000"></div>';
-        guessDiv.innerHTML = '';
+        // draw_tool_row.innerHTML = '<div id="draw-buttons"> Draw <button id="pencil-btn" class="btn-sm" onclick="pencil">&#9998</button> <button id="rectangle-btn" class="btn-sm" onclick="rectangle">&#11036</button><button id="line-btn" class="btn-sm" onclick="line">&#8213</button><button id="circle-btn" class="btn-sm" onclick="circle">&#x25EF</button><button id="undo-btn">undo</button> <input type="Color" id="color-val" name="" class="form-control form-control-color" value="#000000"></div>';
+        hideDiv();
+        showWordDiv();
+        showDrawDiv();
+        
         document.querySelector('#pencil-btn').onclick = function (e) {
           drawTool = 0;
         };
@@ -278,14 +333,26 @@ chatSocket.onmessage = function (e) {
 
     case "turn_ended":
 
-      draw_tool_row.innerHTML = "";
-      guessDiv.innerHTML = '<input id="chat-field" type="text" autofocus> <button id="guess-btn" type="submit">guess</button>';
+      // draw_tool_row.innerHTML = "";
+      showDiv();
+      hideWordDiv();
+      hideDrawDiv();
+      // sends guess through socket
+      document.querySelector('#guess-btn').onclick = function () {
+        chatSocket.send(JSON.stringify({
+          'type': "guess",
+          'guess': document.getElementById("chat-field").value,
+          'player': username
+        }))
+        chatField.value = "";
+
+      };
       drawTool = -1; // means no tool selected
       //console.log("w");
       // let endbtn = document.getElementById('end-btn');
       // endbtn.click();
       break;
-    
+
     case "empty_chat":
       chatDiv.innerHTML = '';
       break;
@@ -312,7 +379,7 @@ chatSocket.onmessage = function (e) {
       break;
 
     case "hidden_word":
-      //console.log(data.word);
+      // hidden_word.innerText = "Word: " + data.word;
       hidden_word.innerText = "Word: " + data.word;
       break;
 
@@ -433,7 +500,7 @@ canvas.addEventListener('mousemove', (event) => {
 // Drawing on mouseup
 canvas.addEventListener('mouseup', (event) => {
   isDrawing = false;
-  
+
   //drawing rectangle
   if (drawTool == 1) {
     const currentX = event.clientX - canvas.offsetLeft;

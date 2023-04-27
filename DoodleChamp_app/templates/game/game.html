@@ -65,6 +65,10 @@
                 <div id="hidden-word" class="col-md-6 offset-md-2 border d-flex justify-content-center">
                     <h6>Word: </h6>
                 </div>
+                <div id="see-word-div" style="display: none;" class="col">
+                    <button id="see-word-btn" class="btn btn-sm btn-outline-info me-2 text-light" type="button"
+                        data-bs-toggle="modal" data-bs-target="#seeWordModal">See Word</button>
+                </div>
             </div>
             <div class="row h-75">
                 <div class="col-2 border header bg-dark text-light">
@@ -78,7 +82,8 @@
                 </div>
                 <div id="chat" class="col-4 border header bg-dark text-light">
                     <h6>Chat</h6>
-                    <div id="chat-div" class="mx-auto w-100 w-md-75 w-lg-50 max-width-500px" style="height: 400px; overflow-y: scroll; word-wrap: break-word; text-align: left;"></div><br>
+                    <div id="chat-div" class="mx-auto w-100 w-md-75 w-lg-50 max-width-500px"
+                        style="height: 400px; overflow-y: scroll; word-wrap: break-word; text-align: left;"></div><br>
                     <div id="guess-div">
                         <input id="chat-field" type="text" autofocus>
                         <button class="btn btn-sm btn-outline-success me-2 text-light" id="guess-btn"
@@ -87,7 +92,14 @@
                 </div>
             </div>
             <div class="row">
-                <div id="draw-tools" class="col-md-2 offset-md-4 border d-flex justify-content-center"></div>
+                <div id="draw-tools" style="visibility: hidden;" class="col-md-2 offset-md-4 border d-flex justify-content-center">
+                    <div id="draw-buttons"> Draw <button id="pencil-btn" class="btn-sm" onclick="pencil">&#9998</button>
+                        <button id="rectangle-btn" class="btn-sm" onclick="rectangle">&#11036</button>
+                        <button id="line-btn" class="btn-sm" onclick="line">&#8213</button>
+                        <button id="circle-btn" class="btn-sm" onclick="circle">&#x25EF</button>
+                        <button id="undo-btn">undo</button> <input type="Color" id="color-val" name="" class="form-control form-control-color" value="#000000">
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -138,6 +150,22 @@
     <div id="scoreboard" class="modal-body">
 
     </div>
+
+    <!-- see word drawer Modal -->
+    <div class="modal modal-dark fade" id="seeWordModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+        aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="seeWordModalLabel">Word to Draw:</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div id="see-word-list" class="modal-body">
+                </div>
+            </div>
+        </div>
+    </div>
+
     <footer class="bg-dark text-light py-3 fixed-bottom">
         <p class="text-center m-0"><small>DoodleChamp by</small> <a href="https://github.com/Gabrielmbl" target="_blank"
                 class="opacity-50 text-white">Gabriel</a>, <a href="https://github.com/Hunter-Kendall" target="_blank"

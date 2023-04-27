@@ -338,8 +338,9 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
         current_word = await sync_to_async(curr_word)(code = self.room_group_name)
         
         new_string = " ".join("_" * len(c) for c in current_word.active_word)
-        print(current_word, new_string)
-        await self.send(text_data=json.dumps({"type": "hidden_word", "word": new_string}))
+        print(current_word.active_word, new_string)
+        # await self.send(text_data=json.dumps({"type": "hidden_word", "word": new_string}))
+        await self.send(text_data=json.dumps({"type": "hidden_word", "word": new_string, "actual_word": current_word.active_word}))
 
         self.guess_list = []
 
