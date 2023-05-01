@@ -18,7 +18,7 @@ class Words(models.Model):
 
 class Lobby(models.Model):
     code = models.TextField(primary_key = True)
-    host = models.TextField()
+    host = models.ForeignKey(User, default=1, on_delete=models.PROTECT)
 
 class Players(models.Model):
     id = models.AutoField(
@@ -27,7 +27,7 @@ class Players(models.Model):
                 serialize = False, 
                 verbose_name ='ID')
     code = models.ForeignKey(Lobby, default=1, on_delete=models.CASCADE)
-    name = models.TextField()
+    name = models.ForeignKey(User, default=1, on_delete=models.PROTECT)
     isDrawer = models.BooleanField(default=False)
     score = models.IntegerField(default=0)
 class Game(models.Model):

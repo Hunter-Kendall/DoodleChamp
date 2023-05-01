@@ -34,6 +34,7 @@ else:
 # Application definition
 
 INSTALLED_APPS = [
+    'crispy_forms',
     'daphne',
     'DoodleChamp_app',
     'django.contrib.admin',
@@ -141,3 +142,5 @@ CHANNEL_LAYERS = {
         },
     },
 }
+
+CRISPY_TEMPLATE_PACK = 'Bootstrap2'

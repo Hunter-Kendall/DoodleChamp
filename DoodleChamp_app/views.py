@@ -5,8 +5,10 @@ import random
 
 from django.shortcuts import  render, redirect
 from .forms import NewUserForm
-from django.contrib.auth import login
+from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
+from django.contrib.auth.forms import AuthenticationForm #add this
+
 
 def register_request(request):
 	if request.method == "POST":
@@ -15,16 +17,39 @@ def register_request(request):
 			user = form.save()
 			login(request, user)
 			messages.success(request, "Registration successful." )
-			return redirect("main:homepage")
+			return redirect("/")
 		messages.error(request, "Unsuccessful registration. Invalid information.")
 	form = NewUserForm()
-	return render (request=request, template_name="main/register.html", context={"register_form":form})
+	return render (request=request, template_name="registration/register.html", context={"register_form":form})
 
+def login_request(request):
+	if request.method == "POST":
+		form = AuthenticationForm(request, data=request.POST)
+		if form.is_valid():
+			username = form.cleaned_data.get('username')
+			password = form.cleaned_data.get('password')
+			user = authenticate(username=username, password=password)
+			if user is not None:
+				login(request, user)
+				messages.info(request, f"You are now logged in as {username}.")
+				return redirect("/")
+			else:
+				messages.error(request,"Invalid username or password.")
+		else:
+			messages.error(request,"Invalid username or password.")
+	form = AuthenticationForm()
+	return render(request=request, template_name="registration/login.html", context={"login_form":form})
+
+
+def logout_request(request):
+	logout(request)
+	messages.info(request, "You have successfully logged out.") 
+	return redirect("/")
 # Create your views here.
 
 def index(request):
     lobbies = Lobby.objects.all() # To be removed. Only for testing purposes
-    return render(request, "game/index.html", {'lobbies': lobbies})
+    return render(request, "game/home.html", {'lobbies': lobbies})
 
 def room_code():
     random_code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=4)) 
@@ -37,8 +62,8 @@ def room_code():
 # Make this be what gets called by create_lobby url. Drop room_name.
 def create_lobby(request):
     # Randomly generate a room name.
+    username = request.user
     code = room_code()
-    username = request.POST["name"]
     Lobby.objects.create(code = code, host = username)
     lobby_code = Lobby.objects.get(code = code)
     Players.objects.create(code = lobby_code, name = username, isDrawer = True)

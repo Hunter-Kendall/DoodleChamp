@@ -1,38 +1,6 @@
-<!DOCTYPE html>
-<html>
-<header>
-    <meta charset="utf-8" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
-    <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="/">
-                DoodleChamp &#33;&reg;
-            </a>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="/">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" aria-current="page">Join code: {{ room_name }}</a>
-                        {{ room_name|json_script:"room-name" }}
-                    </li>
-                </ul>
-            </div>
-            <button class="btn btn-outline-success me-2" id="start-btn" type="button">Start Game</button>
-            <button class="btn btn-sm btn-outline-secondary" id="test-btn" type="button">Start test</button>
-        </div>
-    </nav>
-    <style>
-        body {
-            /* overflow: hidden; */
-            height: 100%;
-        }
-    </style>
-</header>
+{% extends "index.html" %}
+{% block content %} 
+
 
 
 <body class="d-flex flex-column bg-dark">
@@ -152,4 +120,4 @@
     </footer>
 </body>
 
-</html>
+{% endblock %}
