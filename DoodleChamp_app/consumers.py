@@ -8,7 +8,12 @@ import random
 
 def get_players(code):
     lobby_code = code[-4:]
-    return list(Players.objects.filter(code = lobby_code))
+    names = []
+    query = list(Players.objects.filter(code = lobby_code))
+    for i in query:
+        # print("get_playwers", i.name)
+        names.append(i.name)
+    return names
 
     # return Players.objects.exclude(name=name).filter(code=code)
 
@@ -199,7 +204,7 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
     
     async def set_username(self, event):
         self.username = event["username"]
-        print(self.username)
+        print("1", self.username)
     
     async def print_name(self, event):
         print("t", self.username)
@@ -211,11 +216,12 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
 
         await self.send(text_data=json.dumps({"type": "delete_players"}))
 
-        # print("users", users)
+        print("users", users)
         for user in users:
-            # print(user.name)
-            # name = user.values()["name"]
-            await self.send(text_data=json.dumps({"type": "add_players", "player": user.name}))
+            print("2:", user)
+            name = str(user)
+            print("name", str(name))
+            await self.send(text_data=json.dumps({"type": "add_players", "player": name}))
             # await self.send(text_data=json.dumps({"type": "add_players", "player": f"{user.name} | {user.score}"}))
 
         
