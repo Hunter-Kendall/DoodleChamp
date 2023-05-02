@@ -15,6 +15,15 @@ def get_players(code):
         names.append(i.name)
     return names
 
+def get_players_for_game(code):
+    lobby_code = code[-4:]
+    names = []
+    query = list(Players.objects.filter(code = lobby_code))
+    for i in query:
+        # print("get_playwers", i.name)
+        names.append([i.name, i.score])
+    return names
+
     # return Players.objects.exclude(name=name).filter(code=code)
 
 def player_rotate(code):
@@ -57,8 +66,8 @@ def get_drawer(code):
     lobby_code = code[-4:]
     # l = Players.objects.filter(code = lobby_code, isDrawer = True)
     #print("l", l.values())
-
-    return list(Players.objects.filter(code = lobby_code, isDrawer = True))
+    drawer = Players.objects.get(code = lobby_code, isDrawer = True)
+    return drawer.name
 
 def set_word(code, word, points):
     lobby_code = code[-4:]
@@ -216,11 +225,11 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
 
         await self.send(text_data=json.dumps({"type": "delete_players"}))
 
-        print("users", users)
+        # print("users", users)
         for user in users:
-            print("2:", user)
-            name = str(user)
-            print("name", str(name))
+            # print("2:", user)
+            name = str(user)#needs to be converted to a string
+            # print("name", str(name))
             await self.send(text_data=json.dumps({"type": "add_players", "player": name}))
             # await self.send(text_data=json.dumps({"type": "add_players", "player": f"{user.name} | {user.score}"}))
 
@@ -313,15 +322,16 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
         # Note: Update scores here with a function
         print("new_turn")
         drawer = await sync_to_async(get_drawer)(code = self.room_group_name)
-        users = await sync_to_async(get_players)(code = self.room_group_name) #gets all players in the room except the user to be displayed in the player list
-        #print("drawer", drawer)
+        users = await sync_to_async(get_players_for_game)(code = self.room_group_name)
+
+        print("drawer", drawer)
         #delete players
         #show scores
         await self.send(text_data=json.dumps({"type": "delete_players"}))
         for user in users:
-            await self.send(text_data=json.dumps({"type": "add_players", "player": f"{user.name} | {user.score}"}))
-        await self.send(text_data=json.dumps({"type": "show_drawer", "player": drawer[0].name}))
-        await self.send(text_data=json.dumps({"type": "draw_turn", "player": drawer[0].name}))
+            await self.send(text_data=json.dumps({"type": "add_players", "player": f"{str(user[0])} | {str(user[1])}"}))
+        await self.send(text_data=json.dumps({"type": "show_drawer", "player": str(drawer)}))
+        await self.send(text_data=json.dumps({"type": "draw_turn", "player": str(drawer)}))
         
 
 

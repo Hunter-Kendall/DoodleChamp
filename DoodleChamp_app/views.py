@@ -83,7 +83,7 @@ def game_room(request):
 
 def join_lobby(request):
     lobby_code = request.POST["code"]
-    username = request.POST["name"]
+    username = request.user
     lobby_filter = Lobby.objects.filter(code = lobby_code)
     name_check = Players.objects.filter(code = lobby_code, name = username)
     if len(lobby_filter.values()) == 1:
