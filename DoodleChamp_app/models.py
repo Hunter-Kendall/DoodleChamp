@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
 	def __str__(self):
-		return str(self.first_name) + " " + str(self.last_name)
+		return str(self.username)
 
 
 class Words(models.Model):
@@ -18,7 +18,7 @@ class Words(models.Model):
 
 class Lobby(models.Model):
     code = models.TextField(primary_key = True)
-    host = models.ForeignKey(User, default=1, on_delete=models.PROTECT)
+    host = models.ForeignKey(User, on_delete=models.PROTECT)
 
 class Players(models.Model):
     id = models.AutoField(
@@ -27,7 +27,7 @@ class Players(models.Model):
                 serialize = False, 
                 verbose_name ='ID')
     code = models.ForeignKey(Lobby, default=1, on_delete=models.CASCADE)
-    name = models.ForeignKey(User, default=1, on_delete=models.PROTECT)
+    name = models.ForeignKey(User, on_delete=models.PROTECT)
     isDrawer = models.BooleanField(default=False)
     score = models.IntegerField(default=0)
 class Game(models.Model):
