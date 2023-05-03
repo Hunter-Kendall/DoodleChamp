@@ -1,5 +1,5 @@
 import json
-from DoodleChamp_app.models import Lobby, Players, Words, Game
+from DoodleChamp_app.models import Lobby, Players, Words, Game, User
 from DoodleChamp_app.words import word_list, word_dict
 from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import sync_to_async, async_to_sync
@@ -8,7 +8,21 @@ import random
 
 def get_players(code):
     lobby_code = code[-4:]
-    return list(Players.objects.filter(code = lobby_code))
+    names = []
+    query = list(Players.objects.filter(code = lobby_code))
+    for i in query:
+        # print("get_playwers", i.name)
+        names.append(i.name)
+    return names
+
+def get_players_for_game(code):
+    lobby_code = code[-4:]
+    names = []
+    query = list(Players.objects.filter(code = lobby_code))
+    for i in query:
+        #print("get_playwers", i.name, i.score)
+        names.append([i.name, i.score])
+    return names
 
     # return Players.objects.exclude(name=name).filter(code=code)
 
@@ -46,14 +60,18 @@ def check_round(code):
 
 def final_scoreboard(code):
     lobby_code = code[-4:]
-    return list(Players.objects.filter(code=lobby_code).order_by('-score'))
+    scoreboard = []
+    scores = list(Players.objects.filter(code=lobby_code).order_by('-score'))
+    for i in scores:
+        scoreboard.append([i.name, i.score])
+    return scoreboard
 def get_drawer(code):
     
     lobby_code = code[-4:]
     # l = Players.objects.filter(code = lobby_code, isDrawer = True)
     #print("l", l.values())
-
-    return list(Players.objects.filter(code = lobby_code, isDrawer = True))
+    drawer = Players.objects.get(code = lobby_code, isDrawer = True)
+    return drawer.name
 
 def set_word(code, word, points):
     lobby_code = code[-4:]
@@ -85,10 +103,15 @@ def add_words():
         print("passed")
         pass
 def calc_points(code, player, points):
+
     lobby_code = code[-4:]
-    user = Players.objects.get(code = lobby_code, name = player)
-    user.score = user.score + points
-    user.save()
+    user = User.objects.get(username = player)
+    print("c", user)
+    score = Players.objects.get(code = lobby_code, name = user)
+    print("score", score)
+    score.score = score.score + points
+    print(score.score)
+    score.save()
 
 
 def get_words():
@@ -201,7 +224,7 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
     
     async def set_username(self, event):
         self.username = event["username"]
-        print(self.username)
+        print("1", self.username)
     
     async def print_name(self, event):
         print("t", self.username)
@@ -215,9 +238,10 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
 
         # print("users", users)
         for user in users:
-            # print(user.name)
-            # name = user.values()["name"]
-            await self.send(text_data=json.dumps({"type": "add_players", "player": user.name}))
+            # print("2:", user)
+            name = str(user)#needs to be converted to a string
+            # print("name", str(name))
+            await self.send(text_data=json.dumps({"type": "add_players", "player": name}))
             # await self.send(text_data=json.dumps({"type": "add_players", "player": f"{user.name} | {user.score}"}))
 
         
@@ -309,15 +333,17 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
         # Note: Update scores here with a function
         print("new_turn")
         drawer = await sync_to_async(get_drawer)(code = self.room_group_name)
-        users = await sync_to_async(get_players)(code = self.room_group_name) #gets all players in the room except the user to be displayed in the player list
-        #print("drawer", drawer)
+        users = await sync_to_async(get_players_for_game)(code = self.room_group_name)
+
+        print("drawer", drawer)
         #delete players
         #show scores
         await self.send(text_data=json.dumps({"type": "delete_players"}))
         for user in users:
-            await self.send(text_data=json.dumps({"type": "add_players", "player": f"{user.name} | {user.score}"}))
-        await self.send(text_data=json.dumps({"type": "show_drawer", "player": drawer[0].name}))
-        await self.send(text_data=json.dumps({"type": "draw_turn", "player": drawer[0].name}))
+            print("dturn", str(user[1]))
+            await self.send(text_data=json.dumps({"type": "add_players", "player": f"{str(user[0])} | {str(user[1])}"}))
+        await self.send(text_data=json.dumps({"type": "show_drawer", "player": str(drawer)}))
+        await self.send(text_data=json.dumps({"type": "draw_turn", "player": str(drawer)}))
         
 
 
@@ -356,6 +382,7 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
 
 
     async def round(self, event):
+        print("round")
         num_players = await sync_to_async(get_players)(code = self.room_group_name)
         current_word = await sync_to_async(curr_word)(code = self.room_group_name)
         points = current_word.point_value
@@ -377,8 +404,8 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
         scoreboard = await sync_to_async(final_scoreboard)(code = self.room_group_name)
         print(scoreboard)
         for i, user in enumerate(scoreboard):
-            print(i)
-            await self.send(text_data=json.dumps({"type": "end_game", "prompt": f"{i + 1}: {user.name} Points: {user.score}"}))
+            print("endgame", i)
+            await self.send(text_data=json.dumps({"type": "end_game", "prompt": f"{i + 1}: {user[0]} Points: {user[1]}"}))
         await self.send(text_data=json.dumps({"type": "end_modal"}))
         
 

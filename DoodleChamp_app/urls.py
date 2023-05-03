@@ -11,4 +11,7 @@ urlpatterns = [
     path("Lobby", views.join_lobby, name="join"),
     path("Game", views.game_room, name="game_room"),
     # path("Lobby/Game", views.game_room, name="game_room")
+    path("register", views.register_request, name="register"),
+    path("login", views.login_request, name="login"),
+    path("logout", views.logout_request, name= "logout"),
 ]

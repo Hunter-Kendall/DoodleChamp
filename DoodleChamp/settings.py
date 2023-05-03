@@ -34,6 +34,7 @@ else:
 # Application definition
 
 INSTALLED_APPS = [
+    'crispy_forms',
     'daphne',
     'DoodleChamp_app',
     'django.contrib.admin',
@@ -128,7 +129,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
-# DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+AUTH_USER_MODEL = "DoodleChamp_app.User"
 
 ASGI_APPLICATION = "DoodleChamp.asgi.application"
 
@@ -140,3 +142,5 @@ CHANNEL_LAYERS = {
         },
     },
 }
+
+CRISPY_TEMPLATE_PACK = 'Bootstrap2'
