@@ -185,6 +185,8 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
         elif action_type == "turn_ended":
              #is here since it only needs to be executed once
             await self.channel_layer.group_send(self.room_group_name, {"type": action_type})
+        elif action_type == "empty_chat":
+            await self.channel_layer.group_send(self.room_group_name, {"type": action_type})
         elif action_type == "set_player_list":
             await self.channel_layer.group_send(self.room_group_name, {"type": action_type})
         elif action_type == "set_word":
@@ -329,12 +331,16 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
         
         print("turn ended")
 
+    async def empty_chat(self, event):
+        await self.send(text_data=json.dumps({"type": "empty_chat"}))      
+
     async def show_word(self, event):
         current_word = await sync_to_async(curr_word)(code = self.room_group_name)
         
         new_string = " ".join("_" * len(c) for c in current_word.active_word)
-        print(current_word, new_string)
-        await self.send(text_data=json.dumps({"type": "hidden_word", "word": new_string}))
+        print(current_word.active_word, new_string)
+        # await self.send(text_data=json.dumps({"type": "hidden_word", "word": new_string}))
+        await self.send(text_data=json.dumps({"type": "hidden_word", "word": new_string, "actual_word": current_word.active_word}))
 
         self.guess_list = []
 
@@ -343,7 +349,7 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
         guess = event["guess"]
         player = event["player"]
         if guess == current_word.active_word:
-            await self.send(text_data=json.dumps({"type": "guess_return", "msg": f"{player} has guessed the word"}))
+            await self.send(text_data=json.dumps({"type": "guess_return", "msg": f"{player} has guessed the word: {guess}"}))
             await self.channel_layer.group_send(self.room_group_name, {"type": "round", "player": player})
         else:
             await self.send(text_data=json.dumps({"type": "guess_return", "msg": f"{player}: {guess}"}))
