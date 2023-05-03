@@ -6,6 +6,8 @@ class User(AbstractUser):
 	def __str__(self):
 		return str(self.username)
 
+class stats(models.model):
+
 
 class Words(models.Model):
     id = models.AutoField(
