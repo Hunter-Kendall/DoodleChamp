@@ -6,7 +6,10 @@ class User(AbstractUser):
 	def __str__(self):
 		return str(self.username)
 
-class stats(models.model):
+class Stats(models.Model):
+    user = models.ForeignKey(User, on_delete=models.PROTECT)
+    wins = models.IntegerField()
+    loses = models.IntegerField()
 
 
 class Words(models.Model):

@@ -1,5 +1,5 @@
 import json
-from DoodleChamp_app.models import Lobby, Players, Words, Game, User
+from DoodleChamp_app.models import Lobby, Players, Words, Game, User, Stats
 from DoodleChamp_app.words import word_list, word_dict
 from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import sync_to_async, async_to_sync
@@ -64,7 +64,29 @@ def final_scoreboard(code):
     scores = list(Players.objects.filter(code=lobby_code).order_by('-score'))
     for i in scores:
         scoreboard.append([i.name, i.score])
+
     return scoreboard
+def calc_stats(code):
+    lobby_code = code[-4:]
+    first = ""
+    top_score = 0
+    scores = list(Players.objects.filter(code=lobby_code).order_by('-score'))
+    for i in scores:
+        if i.score > top_score:
+            top_score = i.score
+            first = i.name
+        
+    for i in scores:
+        print("scorte", type(i.name))
+        if i.name == first:
+           winner = Stats.objects.get(user = first) 
+           winner.wins = winner.wins + 1
+           winner.save()
+        else:
+            loser = Stats.objects.get(user = i.name) 
+            loser.loses = loser.loses + 1
+            loser.save()
+
 def get_drawer(code):
     
     lobby_code = code[-4:]
@@ -203,6 +225,7 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
             print(round)
             if round <= 0:
                 await self.channel_layer.group_send(self.room_group_name, {"type": "end_game"})
+                await sync_to_async(calc_stats)(code = self.room_group_name)
             else:
                 await sync_to_async(player_rotate)(code = self.room_group_name)
         elif action_type == "turn_ended":

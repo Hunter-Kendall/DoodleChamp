@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from DoodleChamp_app.models import Lobby, Players, Game
+from DoodleChamp_app.models import Lobby, Players, Game, Stats
 import string
 import random
 
@@ -11,16 +11,17 @@ from django.contrib.auth.forms import AuthenticationForm #add this
 
 
 def register_request(request):
-	if request.method == "POST":
-		form = NewUserForm(request.POST)
-		if form.is_valid():
-			user = form.save()
-			login(request, user)
-			messages.success(request, "Registration successful." )
-			return redirect("/")
-		messages.error(request, "Unsuccessful registration. Invalid information.")
-	form = NewUserForm()
-	return render (request=request, template_name="registration/register.html", context={"register_form":form})
+    if request.method == "POST":
+        form = NewUserForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            Stats.objects.create(user = user, wins = 0, loses = 0)
+            messages.success(request, "Registration successful." )
+            return redirect("/")
+        messages.error(request, "Unsuccessful registration. Invalid information.")
+    form = NewUserForm()
+    return render (request=request, template_name="registration/register.html", context={"register_form":form})
 
 def login_request(request):
 	if request.method == "POST":
@@ -78,6 +79,7 @@ def create_lobby(request):
 
 
 def game_room(request):
+    
     return render(request, "game/game.html", {"game_room_name": request.POST["game-code"], "username": request.POST["username"]})
     
 
