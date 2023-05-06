@@ -17,6 +17,8 @@ let word2 = '';
 let value2 = 0;
 let canvasContainer = document.getElementById("canvas-container");
 let seeWordModal = document.getElementById("see-word-list");
+let round_div = document.getElementById("round-div");
+
 
 
 canvas.width = canvasContainer.clientWidth - 50;
@@ -370,13 +372,17 @@ chatSocket.onmessage = function (e) {
 
     case "end_modal":
       document.getElementById('final-modal').click();
+      break;
 
     case "end_game":
       ptag = document.createElement('p');
       ptag.innerHTML = data.prompt;
       scoreboard.appendChild(ptag);
       break;
-
+    
+    case "next_round":
+      round_div.innerHTML = "Round: " + data.round
+      break;
   }
 }
 

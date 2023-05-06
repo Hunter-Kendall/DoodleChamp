@@ -4,6 +4,7 @@ from DoodleChamp_app.words import word_list, word_dict
 from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import sync_to_async, async_to_sync
 import random
+import time
 # from django.db.models.functions import Rand
 
 def get_players(code):
@@ -34,6 +35,7 @@ def player_rotate(code):
     curr_id = current_drawer[0].id
     first_id = players[0].id
     max_id = players[len(players) - 1].id
+    
     if curr_id != max_id:
         curr_player = Players.objects.get(code = lobby_code, isDrawer = True)
         curr_player.isDrawer = False
@@ -41,6 +43,10 @@ def player_rotate(code):
         next_player = Players.objects.get(code = lobby_code, id = curr_id + 1)
         next_player.isDrawer = True
         next_player.save()
+        if curr_id == first_id:
+            return True
+        else:
+            return False
     else:
         #print("test", curr_id)
         curr_player = Players.objects.get(code = lobby_code, isDrawer = True)
@@ -52,6 +58,7 @@ def player_rotate(code):
         game = Game.objects.get(code = lobby_code)
         game.round = game.round - 1
         game.save()
+        return False
 
 def check_round(code):
     lobby_code = code[-4:]
@@ -113,6 +120,13 @@ def curr_word(code):
     lobby_code = code[-4:]
     word = Game.objects.get(code = lobby_code)
     return word
+
+def delete_lobby(code):
+    lobby_code = code[-4:]
+    exists = Lobby.objects.filter(code = lobby_code)
+    if len(exists.values()) == 1:
+        Lobby.objects.get(code = lobby_code).delete()
+
 def add_words():
     if not Words.objects.exists(): 
         for i in word_list:
@@ -156,8 +170,11 @@ def get_words():
 
 
 class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
-    # def __init__(self):
-    #     self.username = ""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.num_round = 0
+    
+        
     async def connect(self):
         self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
         self.room_group_name = "DoodleChamp_app%s" % self.room_name
@@ -229,6 +246,7 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
             await self.channel_layer.group_send(self.room_group_name, {"type": action_type, "round_setting": text_data_json["round_setting"]})
             
         elif action_type == "next_player":
+            
             print("next player")
             
             round = await sync_to_async(check_round)(code = self.room_group_name)
@@ -236,11 +254,18 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
             if round <= 0:
                 await self.channel_layer.group_send(self.room_group_name, {"type": "end_game"})
                 await sync_to_async(calc_stats)(code = self.room_group_name)
+                
             else:
-                await sync_to_async(player_rotate)(code = self.room_group_name)
+                
+                change_round = await sync_to_async(player_rotate)(code = self.room_group_name)
+                if change_round == True:
+                    await self.channel_layer.group_send(self.room_group_name, {"type": "next_round"})
+                    
         elif action_type == "turn_ended":
              #is here since it only needs to be executed once
             await self.channel_layer.group_send(self.room_group_name, {"type": action_type})
+        elif action_type == "delete_lobby":
+            await sync_to_async(delete_lobby)(code = self.room_group_name)
         elif action_type == "empty_chat":
             await self.channel_layer.group_send(self.room_group_name, {"type": action_type})
         elif action_type == "set_player_list":
@@ -449,6 +474,11 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
             print("endgame", i)
             await self.send(text_data=json.dumps({"type": "end_game", "prompt": f"{i + 1}: {user[0]} Points: {user[1]}"}))
         await self.send(text_data=json.dumps({"type": "end_modal"}))
+        
+    
+    async def next_round(self, event):
+        self.num_round += 1
+        await self.send(text_data=json.dumps({"type": "next_round", "round": self.num_round}))
         
 
         
