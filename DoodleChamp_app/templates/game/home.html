@@ -20,12 +20,22 @@
                         Create Lobby
                     </a>
                     <div class="collapse" id="createLobby">
-                        <div class="card card-body bg-dark">
-                            <form action="Host" method="POST">
-                                <button id="lobby-btn" class="btn btn-secondary fw-bold">Create It!</button>
-                                {% csrf_token %}
-                            </form>
-                        </div>
+                        {% if user.is_authenticated %}
+                            <div class="card card-body bg-dark">
+                                <form action="Host" method="POST">
+                                    <button id="lobby-btn" class="btn btn-secondary fw-bold">Create It!</button>
+                                    {% csrf_token %}
+                                </form>
+                            </div>
+                        {% else %}
+                            <div class="card card-body bg-dark">
+                                <form action="Host" method="POST">
+                                    <label for="login-create"><p class="fw-light">Must login first to create a lobby</p></label><br>
+                                    <a id="login-btn" name="login-create" href="{% url 'login' %}" class="btn btn-sm btn-light fw-bold">Login</a>
+                                    {% csrf_token %}
+                                </form>
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -42,14 +52,24 @@
                         Join Lobby
                     </button>
                     <div class="collapse" id="joinLobby">
-                        <div class="card card-body bg-dark">
-                            <form action="Lobby" method="POST">
-                                <label for="code">Lobby Code</label><br>
-                                <input class="form-control" id="lobby-code" name="code" type="text" placeholder="Type the Lobby Code" autofocus><br>
-                                <button id="join-btn" class="btn btn-secondary fw-bold">Join It!</button>
-                                {% csrf_token %}
-                            </form>
-                        </div>
+                        {% if user.is_authenticated %}
+                            <div class="card card-body bg-dark">
+                                <form action="Lobby" method="POST">
+                                    <label for="code">Lobby Code</label><br>
+                                    <input class="form-control" id="lobby-code" name="code" type="text" placeholder="Type the Lobby Code" autofocus><br>
+                                    <button id="join-btn" class="btn btn-secondary fw-bold">Join It!</button>
+                                    {% csrf_token %}
+                                </form>
+                            </div>
+                        {% else %}
+                            <div class="card card-body bg-dark">
+                                <form action="Host" method="POST">
+                                    <label for="login-join"><p class="fw-light">Must login first to join a lobby</p></label><br>
+                                    <a id="login-btn" name="login-join" href="{% url 'login' %}" class="btn btn-sm btn-light fw-bold">Login</a>
+                                    {% csrf_token %}
+                                </form>
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>

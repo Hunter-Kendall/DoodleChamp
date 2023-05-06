@@ -29,7 +29,6 @@ function cPush() {
   cPushArray.push(canvas.toDataURL());
 }
 
-console.log('cStep at the beginning: ' + cStep)
 
 // undo to previous canvas
 function cUndo() {

@@ -3,8 +3,13 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
-	def __str__(self):
-		return str(self.username)
+    def __str__(self):
+        return str(self.username)
+
+class Stats(models.Model):
+    user = models.ForeignKey(User, on_delete=models.PROTECT)
+    wins = models.IntegerField()
+    loses = models.IntegerField()
 
 
 class Words(models.Model):
@@ -36,12 +41,3 @@ class Game(models.Model):
     timer = models.IntegerField(default= 90) #in seconds
     active_word = models.TextField(default = "")
     point_value = models.IntegerField(default = 0)
-
-# class Guess(models.Model):
-#     code = models.ForeignKey(Lobby, default=1, on_delete=models.CASCADE)
-    
-
-
-
-
-    

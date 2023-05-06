@@ -73,19 +73,19 @@
             <div class="row h-75">
                 <div class="col-2 border border-info border-opacity-25 border-4 rounded-3 header bg-dark text-light">
                     <h6>Player List</h6>
-                    <div id="player-list">
+                    <div id="player-list" class="border-top">
 
                     </div>
                 </div>
                 <div class="col-6 border border-info border-opacity-25 border-2 rounded-3" id="canvas-container">
-                    <canvas id="draw-area" class="border border-info border-opacity-25 border-4 rounded-3 bg-dark width-100"></canvas>
+                    <canvas id="draw-area" class="border border-white border-opacity-75 border-4 rounded-3 bg-dark width-100"></canvas>
                 </div>
                 <div id="chat" class="col-4 border border-info border-opacity-25 border-4 rounded-3  header bg-dark text-light">
                     <h6>Chat</h6>
-                    <div id="chat-div" class="mx-auto w-100 w-md-75 w-lg-50 max-width-500px"
+                    <div id="chat-div" class="mx-auto w-100 border-white rounded-3 w-md-75 w-lg-50 max-width-500px"
                         style="height: 400px; overflow-y: scroll; word-wrap: break-word; text-align: left;"></div><br>
                     <div id="guess-div" style="visibility: visible;">
-                        <input id="chat-field" type="text" autofocus>
+                        <input id="chat-field" class="form-control" type="text" autofocus>
                         <button class="btn btn-sm btn-outline-success me-2 text-light" id="guess-btn"
                             type="submit">Guess!</button>
                     </div>
@@ -132,7 +132,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h1 class="modal-title fs-5" id="exampleModalLabel">Final Score</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button id="final-modal-close" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div id="scoreboard" class="modal-body">
 
@@ -164,6 +164,10 @@
                 class="opacity-50 text-white">Gabriel</a>, <a href="https://github.com/Hunter-Kendall" target="_blank"
                 class="opacity-50 text-white">Hunter</a> </p>
     </footer>
+
+    <form id="back-home" action="Home" method="POST">
+        {% csrf_token %}
+    </form>
 
     <script>
         const username = "{{username}}";
@@ -197,6 +201,11 @@
         chatSocket.onclose = function (e) {
             console.error('Chat socket closed unexpectedly');
         };
+
+        document.querySelector('#finalmodal').onclick = function (e) {
+            document.getElementById('back-home').submit();
+        }
+        
     </script>
     <script type="text/javascript" src="../../../static/DoodleChamp_app/js/game.js"></script>
 </body>

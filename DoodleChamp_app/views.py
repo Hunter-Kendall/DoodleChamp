@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from DoodleChamp_app.models import Lobby, Players, Game
+from DoodleChamp_app.models import Lobby, Players, Game, Stats
 import string
 import random
 
@@ -11,16 +11,17 @@ from django.contrib.auth.forms import AuthenticationForm #add this
 
 
 def register_request(request):
-	if request.method == "POST":
-		form = NewUserForm(request.POST)
-		if form.is_valid():
-			user = form.save()
-			login(request, user)
-			messages.success(request, "Registration successful." )
-			return redirect("/")
-		messages.error(request, "Unsuccessful registration. Invalid information.")
-	form = NewUserForm()
-	return render (request=request, template_name="registration/register.html", context={"register_form":form})
+    if request.method == "POST":
+        form = NewUserForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            Stats.objects.create(user = user, wins = 0, loses = 0)
+            messages.success(request, "Registration successful." )
+            return redirect("/")
+        messages.error(request, "Unsuccessful registration. Invalid information.")
+    form = NewUserForm()
+    return render (request=request, template_name="registration/register.html", context={"register_form":form})
 
 def login_request(request):
 	if request.method == "POST":
@@ -49,7 +50,12 @@ def logout_request(request):
 
 def index(request):
     lobbies = Lobby.objects.all() # To be removed. Only for testing purposes
-    return render(request, "game/home.html", {'lobbies': lobbies})
+    user = request.user
+    if user.is_authenticated:
+        stats = Stats.objects.get(user = user)
+        return render(request, "game/home.html", {'lobbies': lobbies, "wins": stats.wins, "loses": stats.loses})
+    else:
+        return render(request, "game/home.html", {'lobbies': lobbies})
 
 def room_code():
     random_code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=4)) 
@@ -78,6 +84,8 @@ def create_lobby(request):
 
 
 def game_room(request):
+    # game_code = Game.objects.get(code=request.POST["game-code"])
+    # game_code.round = request.POST["num_rounds"]
     return render(request, "game/game.html", {"game_room_name": request.POST["game-code"], "username": request.POST["username"]})
     
 

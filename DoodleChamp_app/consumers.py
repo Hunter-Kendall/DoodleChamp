@@ -79,6 +79,14 @@ def set_word(code, word, points):
     word_.active_word = word
     word_.point_value = points
     word_.save()
+
+def set_num_rounds(code, n):
+    lobby_code = code[-4:]
+    round_ = Game.objects.get(code = lobby_code)
+    round_.round = n
+    round_.save()
+    print('num rounds: ', round_.round)
+
 def curr_word(code):
     lobby_code = code[-4:]
     word = Game.objects.get(code = lobby_code)
@@ -195,6 +203,8 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
             await self.channel_layer.group_send(self.room_group_name, {"type": action_type})
         elif action_type == "draw_turn":
             await self.channel_layer.group_send(self.room_group_name, {"type": action_type})
+        elif action_type == "show_round_settings":
+            await self.channel_layer.group_send(self.room_group_name, {"type": action_type, "round_setting": text_data_json["round_setting"]})
             
         elif action_type == "next_player":
             print("next player")
@@ -215,6 +225,10 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
         elif action_type == "set_word":
             await sync_to_async(set_word)(code = self.room_group_name, word = text_data_json["word"], points = text_data_json["points"])
             await self.channel_layer.group_send(self.room_group_name, {"type": "show_word"})
+        
+        elif action_type == "set_num_rounds":
+            await sync_to_async(set_num_rounds)(code = self.room_group_name, n = text_data_json["num_rounds"])
+            # await self.channel_layer.group_send(self.room_group_name, {"type":  action_type})
             
             # await self.channel_layer.group_send(self.room_group_name, {"type": "round"})
         elif action_type == "guess":
@@ -314,6 +328,11 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
 
         await self.send(text_data=json.dumps({"type": "undo",
                                               "pic": pic}))
+
+    async def show_round_settings(self, event):
+        n_rounds = event["round_setting"]
+        # print('n_rounds: ', type(n_rounds))
+        await self.send(text_data=json.dumps({"type": "show_round_settings", "num_rounds": n_rounds}))
     
     async def start_game(self, event):
         await sync_to_async(add_words)()
