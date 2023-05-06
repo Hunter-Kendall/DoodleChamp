@@ -84,7 +84,6 @@ def create_lobby(request):
 
 
 def game_room(request):
-    
     return render(request, "game/game.html", {"game_room_name": request.POST["game-code"], "username": request.POST["username"]})
     
 

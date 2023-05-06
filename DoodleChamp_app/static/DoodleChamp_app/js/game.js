@@ -32,9 +32,6 @@ function cPush() {
 }
 
 
-
-console.log('cStep at the beginning: ' + cStep)
-
 // undo to previous canvas
 function cUndo() {
   console.log('cStep when cUndo is called: ' + cStep)
