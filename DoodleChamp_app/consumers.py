@@ -4,7 +4,7 @@ from DoodleChamp_app.words import word_list, word_dict
 from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import sync_to_async, async_to_sync
 import random
-import asyncio
+import time
 # from django.db.models.functions import Rand
 
 def get_players(code):
@@ -123,7 +123,9 @@ def curr_word(code):
 
 def delete_lobby(code):
     lobby_code = code[-4:]
-    lobby = Lobby.objects.get(code = lobby_code).delete()
+    exists = Lobby.objects.filter(code = lobby_code)
+    if len(exists.values()) == 1:
+        Lobby.objects.get(code = lobby_code).delete()
 
 def add_words():
     if not Words.objects.exists(): 
@@ -252,8 +254,7 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
             if round <= 0:
                 await self.channel_layer.group_send(self.room_group_name, {"type": "end_game"})
                 await sync_to_async(calc_stats)(code = self.room_group_name)
-                await asyncio.sleep(10)
-                await sync_to_async(delete_lobby)(code = self.room_group_name)
+                
             else:
                 
                 change_round = await sync_to_async(player_rotate)(code = self.room_group_name)
@@ -263,6 +264,8 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
         elif action_type == "turn_ended":
              #is here since it only needs to be executed once
             await self.channel_layer.group_send(self.room_group_name, {"type": action_type})
+        elif action_type == "delete_lobby":
+            await sync_to_async(delete_lobby)(code = self.room_group_name)
         elif action_type == "empty_chat":
             await self.channel_layer.group_send(self.room_group_name, {"type": action_type})
         elif action_type == "set_player_list":
@@ -471,6 +474,7 @@ class DoodleChamp_appConsumer(AsyncWebsocketConsumer):
             print("endgame", i)
             await self.send(text_data=json.dumps({"type": "end_game", "prompt": f"{i + 1}: {user[0]} Points: {user[1]}"}))
         await self.send(text_data=json.dumps({"type": "end_modal"}))
+        
     
     async def next_round(self, event):
         self.num_round += 1

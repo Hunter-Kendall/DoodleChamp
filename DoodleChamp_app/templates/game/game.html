@@ -204,6 +204,9 @@
         };
 
         document.querySelector('#finalmodal').onclick = function (e) {
+            chatSocket.send(JSON.stringify({
+                'type': "delete_lobby",
+            }));
             document.getElementById('back-home').submit();
         }
         
