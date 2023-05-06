@@ -50,7 +50,12 @@ def logout_request(request):
 
 def index(request):
     lobbies = Lobby.objects.all() # To be removed. Only for testing purposes
-    return render(request, "game/home.html", {'lobbies': lobbies})
+    user = request.user
+    if user.is_authenticated:
+        stats = Stats.objects.get(user = user)
+        return render(request, "game/home.html", {'lobbies': lobbies, "wins": stats.wins, "loses": stats.loses})
+    else:
+        return render(request, "game/home.html", {'lobbies': lobbies})
 
 def room_code():
     random_code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=4)) 
