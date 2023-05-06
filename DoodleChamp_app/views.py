@@ -84,8 +84,6 @@ def create_lobby(request):
 
 
 def game_room(request):
-    # game_code = Game.objects.get(code=request.POST["game-code"])
-    # game_code.round = request.POST["num_rounds"]
     return render(request, "game/game.html", {"game_room_name": request.POST["game-code"], "username": request.POST["username"]})
     
 

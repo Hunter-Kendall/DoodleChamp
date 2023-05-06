@@ -11,6 +11,11 @@ class Stats(models.Model):
     wins = models.IntegerField()
     loses = models.IntegerField()
 
+class Stats(models.Model):
+    user = models.ForeignKey(User, on_delete=models.PROTECT)
+    wins = models.IntegerField()
+    loses = models.IntegerField()
+
 
 class Words(models.Model):
     id = models.AutoField(
