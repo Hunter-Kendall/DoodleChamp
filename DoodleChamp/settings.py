@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'daphne',
     'DoodleChamp_app',
+    'django_extensions',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
